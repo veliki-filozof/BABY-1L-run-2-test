@@ -20,12 +20,12 @@ This repository has the data for the run [**insert run name**].
 conda env create -f environment.yml
 ```
 
-2. Run the notebooks with the created environment `[INSERT NAME OF ENV]`
+2. Run the notebooks with the created environment `baby_1l_run_2`
 
 ## Todo list:
 - [ ] [Link to Zenodo](https://zenodo.org/)
 - [ ] Update Zenodo badge with new DOI
-- [ ] Change environment name in [`environment.yml`](environment.yml)
+- [x] Change environment name in [`environment.yml`](environment.yml)
 - [ ] Add general run data to [`data/general.json`](data/general.json)
 - [ ] Add LSC data to [`data/tritium_detection`](data/tritium_detection)
 - [ ] Add neutron detection data to [`data/neutron_detection`](data/neutron_detection)

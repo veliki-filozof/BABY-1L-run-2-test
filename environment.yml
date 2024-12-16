@@ -1,4 +1,4 @@
-name: libra-run-env
+name: baby_1l_run_2
 channels:
   - conda-forge
 dependencies:
@@ -16,7 +16,7 @@ dependencies:
   - pint
   - pip
   - pip:
-      - git+https://github.com/libra-project/libra-toolbox # add version tag
+      - git+https://github.com/libra-project/libra-toolbox@v0.3
       - openmc_data_downloader
       - matplotlib-label-lines
       - h-transport-materials
