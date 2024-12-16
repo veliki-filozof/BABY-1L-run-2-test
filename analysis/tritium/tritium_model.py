@@ -125,23 +125,22 @@ neutron_rate = (
 
 # TBR from OpenMC
 
-# from pathlib import Path
+from pathlib import Path
 
-# filename = "../neutron/statepoint.100.h5"
-# filename = Path(filename)
+filename = "../neutron/statepoint.100.h5"
+filename = Path(filename)
 
-# if not filename.exists():
-#     raise FileNotFoundError(f"{filename} does not exist, run OpenMC first")
+if not filename.exists():
+    raise FileNotFoundError(f"{filename} does not exist, run OpenMC first")
 
-# import openmc
+import openmc
 
-# sp = openmc.StatePoint(filename)
-# tally_df = sp.get_tally(name="TBR").get_pandas_dataframe()
-# calculated_TBR = tally_df["mean"].iloc[0] * ureg.particle * ureg.neutron**-1
-# calculated_TBR_std_dev = (
-#     tally_df["std. dev."].iloc[0] * ureg.particle * ureg.neutron**-1
-# )
-calculated_TBR = 1.92e-3 * ureg.particle * ureg.neutron**-1  # TODO remove
+sp = openmc.StatePoint(filename)
+tally_df = sp.get_tally(name="TBR").get_pandas_dataframe()
+calculated_TBR = tally_df["mean"].iloc[0] * ureg.particle * ureg.neutron**-1
+calculated_TBR_std_dev = (
+    tally_df["std. dev."].iloc[0] * ureg.particle * ureg.neutron**-1
+)
 
 # TBR from measurements
 
@@ -165,7 +164,7 @@ k_wall = optimised_ratio * k_top
 baby_model = Model(
     radius=baby_radius,
     height=baby_height,
-    TBR=calculated_TBR,
+    TBR=calculated_TBR,  # TODO replace by measured_TBR
     neutron_rate=neutron_rate,
     irradiations=irradiations,
     k_top=k_top,

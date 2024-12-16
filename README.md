@@ -23,17 +23,17 @@ conda env create -f environment.yml
 2. Run the notebooks with the created environment `baby_1l_run_2`
 
 ## Todo list:
-- [ ] [Link to Zenodo](https://zenodo.org/)
-- [ ] Update Zenodo badge with new DOI
+- [x] [Link to Zenodo](https://zenodo.org/)
 - [x] Change environment name in [`environment.yml`](environment.yml)
 - [x] Add general run data to [`data/general.json`](data/general.json)
 - [ ] Add LSC data to [`data/tritium_detection`](data/tritium_detection)
 - [ ] Add neutron detection data to [`data/neutron_detection`](data/neutron_detection)
-- [ ] Add OpenMC model to [`analysis/neutron`](analysis/neutron)
+- [x] Add OpenMC model to [`analysis/neutron`](analysis/neutron)
 - [x] Add Tritium model to [`analysis/tritium`](analysis/tritium)
 - [ ] Add the right version tags to [`environment.yml`](environment.yml)
 - [x] Add and update information in the README
 - [x] Modify [binder](https://mybinder.org/) badge by inserting the repo name
 - [ ] Update [CI workflows](.github/workflows)
 - [ ] Make first release on GitHub
+- [ ] Update Zenodo badge with new DOI
 - [ ] Link Zenodo record (created automatically) to the [LIBRA-project Zenodo community](https://zenodo.org/communities/libra-project/records)
