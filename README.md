@@ -4,13 +4,13 @@
 
 This is a template repository for experimental runs of LIBRA.
 
-This repository has the data for the run [**insert run name**].
+This repository has the data for the run BABY-1L-run-2.
 
 ## How to reproduce the results
 
 ### In Binder
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/LIBRA-project/INSERT-REPO-NAME/HEAD)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/LIBRA-project/BABY-1L-run-2/HEAD)
 
 ### Locally
 
@@ -26,14 +26,14 @@ conda env create -f environment.yml
 - [ ] [Link to Zenodo](https://zenodo.org/)
 - [ ] Update Zenodo badge with new DOI
 - [x] Change environment name in [`environment.yml`](environment.yml)
-- [ ] Add general run data to [`data/general.json`](data/general.json)
+- [x] Add general run data to [`data/general.json`](data/general.json)
 - [ ] Add LSC data to [`data/tritium_detection`](data/tritium_detection)
 - [ ] Add neutron detection data to [`data/neutron_detection`](data/neutron_detection)
 - [ ] Add OpenMC model to [`analysis/neutron`](analysis/neutron)
-- [ ] Add Tritium model to [`analysis/tritium`](analysis/tritium)
+- [x] Add Tritium model to [`analysis/tritium`](analysis/tritium)
 - [ ] Add the right version tags to [`environment.yml`](environment.yml)
-- [ ] Add and update information in the README
-- [ ] Modify [binder](https://mybinder.org/) badge by inserting the repo name
+- [x] Add and update information in the README
+- [x] Modify [binder](https://mybinder.org/) badge by inserting the repo name
 - [ ] Update [CI workflows](.github/workflows)
 - [ ] Make first release on GitHub
 - [ ] Link Zenodo record (created automatically) to the [LIBRA-project Zenodo community](https://zenodo.org/communities/libra-project/records)
