@@ -23,20 +23,33 @@ file_reader_1.read_file()
 
 # Make samples
 
+# read times from general.json
+with open("../../data/general.json", "r") as f:
+    general_data = json.load(f)
+
+
+time_sample_1_IV = datetime.strptime(
+    general_data["timestamps"]["lsc_sample_times"]["IV"]["2-1-x"]["actual"],
+    "%m/%d/%Y %H:%M",
+)
 sample_1_IV = LIBRASample(
     samples=[
         LSCSample.from_file(file_reader_1, label)
         for label in ["1L-IV_2-1-1", "1L-IV_2-1-2", "1L-IV_2-1-3", "1L-IV_2-1-4"]
     ],
-    time="12/11/2024 9:15 AM",
+    time=time_sample_1_IV,
 )
 
+time_sample_2_IV = datetime.strptime(
+    general_data["timestamps"]["lsc_sample_times"]["IV"]["2-2-x"]["actual"],
+    "%m/%d/%Y %H:%M",
+)
 sample_2_IV = LIBRASample(
     samples=[
         LSCSample.from_file(file_reader_1, label)
         for label in ["1L-IV_2-2-1", "1L-IV_2-2-2", "1L-IV_2-2-3", "1L-IV_2-2-4"]
     ],
-    time="12/12/2024 9:00 AM",
+    time=time_sample_2_IV,
 )
 
 
@@ -97,8 +110,7 @@ baby_cross_section = np.pi * baby_radius**2
 baby_height = baby_volume / baby_cross_section
 
 # read irradiation times from general.json
-with open("../../data/general.json", "r") as f:
-    general_data = json.load(f)
+
 
 irradiations = []
 for generator in general_data["timestamps"]["generators"]:
