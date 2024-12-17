@@ -130,7 +130,8 @@ def extract_info_from_label(label: str, pattern: str = None) -> Dict[str, str]:
 
     if not match:
         raise ValueError(
-            f"Label {label} does not have the correct format [volume]-[stream]_[run nb]-[sample nb]-[vial nb] (e.g., 1L-IV_1-1-1)"
+            f"Label '{label}' does not match the expected format. "
+            f"Pattern used: '{pattern}'"
         )
 
     # Return the matched components as a dictionary
