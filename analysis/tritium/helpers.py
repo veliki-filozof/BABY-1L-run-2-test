@@ -30,8 +30,12 @@ def create_sample(label: str, filename: str) -> LSCSample:
     sample = LSCSample.from_file(file_reader, label)
 
     # try to find the background sample from the file
-    background_label = "1L-BL-1"
-    background_sample = LSCSample.from_file(file_reader, background_label)
+    try:
+        background_label = "1L-BL-1"
+        background_sample = LSCSample.from_file(file_reader, background_label)
+    except ValueError:
+        background_label = "1L-BL-2"
+        background_sample = LSCSample.from_file(file_reader, background_label)
 
     # substract background
     sample.substract_background(background_sample)
