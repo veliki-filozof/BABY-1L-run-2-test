@@ -1,92 +1,40 @@
 from libra_toolbox.tritium.model import ureg, Model, quantity_to_activity
 import numpy as np
 import json
-from libra_toolbox.tritium.lsc_measurements import (
-    LSCFileReader,
-    LIBRASample,
-    LIBRARun,
-    LSCSample,
-    GasStream,
-)
+from libra_toolbox.tritium.lsc_measurements import LIBRARun
+from helpers import create_sample, create_gas_streams
 from datetime import datetime
 
-
-data_folder = "../../data/tritium_detection"
-
-# read files
-file_reader_1 = LSCFileReader(
-    f"{data_folder}/1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
-    labels_column="SMPL_ID",
-)
-file_reader_1.read_file()
+lsc_data_folder = "../../data/tritium_detection"
+with open("../../data/general.json", "r") as f:
+    general_data = json.load(f)
 
 
 # Make samples
-
-# read times from general.json
-with open("../../data/general.json", "r") as f:
-    general_data = json.load(f)
-
-
-time_sample_1_IV = datetime.strptime(
-    general_data["timestamps"]["lsc_sample_times"]["IV"]["2-1-x"]["actual"],
-    "%m/%d/%Y %H:%M",
-)
-sample_1_IV = LIBRASample(
-    samples=[
-        LSCSample.from_file(file_reader_1, label)
-        for label in ["1L-IV_2-1-1", "1L-IV_2-1-2", "1L-IV_2-1-3", "1L-IV_2-1-4"]
-    ],
-    time=time_sample_1_IV,
-)
-
-time_sample_2_IV = datetime.strptime(
-    general_data["timestamps"]["lsc_sample_times"]["IV"]["2-2-x"]["actual"],
-    "%m/%d/%Y %H:%M",
-)
-sample_2_IV = LIBRASample(
-    samples=[
-        LSCSample.from_file(file_reader_1, label)
-        for label in ["1L-IV_2-2-1", "1L-IV_2-2-2", "1L-IV_2-2-3", "1L-IV_2-2-4"]
-    ],
-    time=time_sample_2_IV,
-)
-
-
-# Make streams
+with open(f"{lsc_data_folder}/data.json", "r") as f:
+    lsc_data = json.load(f)
+list_of_samples = [
+    create_sample(sample["label"], f"{lsc_data_folder}/{sample["filename"]}")
+    for sample in lsc_data["samples"]
+]
 
 # read start time from general.json
-with open("../../data/general.json", "r") as f:
-    general_data = json.load(f)
-
 all_start_times = []
 for generator in general_data["timestamps"]["generators"]:
     start_time = datetime.strptime(generator["on"], "%m/%d/%Y %H:%M")
     all_start_times.append(start_time)
-start_time_as_datetime = min(all_start_times)
-start_time = start_time_as_datetime.strftime("%m/%d/%Y %H:%M %p")
+start_time = min(all_start_times)
 
-IV_stream = GasStream(
-    [
-        sample_1_IV,
-        sample_2_IV,
-    ],
+streams = create_gas_streams(
+    samples=list_of_samples,
     start_time=start_time,
+    general_data=general_data,
 )
-OV_stream = GasStream(
-    [],
-    start_time=start_time,
-)
-
-# substract background
-for sample in [sample_1_IV, sample_2_IV]:
-    sample.substract_background(
-        background_sample=LSCSample.from_file(file_reader_1, "1L-BL-1")
-    )
-
+IV_stream = streams["IV"]
+# OV_stream = streams["OV"]  # TODO add this back
 
 # create run
-run = LIBRARun(streams=[IV_stream, OV_stream], start_time=start_time)
+run = LIBRARun(streams=[IV_stream], start_time=start_time)  # TODO add , OV_stream
 
 # check that background is always substracted
 for stream in run.streams:
@@ -98,7 +46,9 @@ for stream in run.streams:
 
 
 replacement_times_top = sorted(IV_stream.relative_times_as_pint)
-replacement_times_walls = [] * ureg.h  # sorted(OV_stream.relative_times_as_pint)
+replacement_times_walls = (
+    [] * ureg.h
+)  # sorted(OV_stream.relative_times_as_pint)# TODO add this back
 
 
 # tritium model
@@ -114,12 +64,8 @@ baby_height = baby_volume / baby_cross_section
 
 irradiations = []
 for generator in general_data["timestamps"]["generators"]:
-    irr_start_time = (
-        datetime.strptime(generator["on"], "%m/%d/%Y %H:%M") - start_time_as_datetime
-    )
-    irr_stop_time = (
-        datetime.strptime(generator["off"], "%m/%d/%Y %H:%M") - start_time_as_datetime
-    )
+    irr_start_time = datetime.strptime(generator["on"], "%m/%d/%Y %H:%M") - start_time
+    irr_stop_time = datetime.strptime(generator["off"], "%m/%d/%Y %H:%M") - start_time
     irr_start_time = irr_start_time.total_seconds() * ureg.second
     irr_stop_time = irr_stop_time.total_seconds() * ureg.second
     irradiations.append([irr_start_time, irr_stop_time])
@@ -161,7 +107,7 @@ total_irradiation_time = sum([irr[1] - irr[0] for irr in irradiations])
 T_consumed = neutron_rate * total_irradiation_time
 T_produced = (
     IV_stream.get_cumulative_activity("total")[-1]
-    # + OV_stream.get_cumulative_activity("total")[-1]
+    # + OV_stream.get_cumulative_activity("total")[-1]  # TODO add this back
 )
 
 measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
