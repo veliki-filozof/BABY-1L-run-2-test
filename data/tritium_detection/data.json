@@ -1,0 +1,52 @@
+{
+    "samples": [
+        {
+            "label": "1L-IV_2-0-1",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-0-2",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-0-3",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-0-4",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-1-1",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-1-2",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-1-3",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-1-4",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-2-1",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-2-2",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-2-3",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        },
+        {
+            "label": "1L-IV_2-2-4",
+            "filename": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+        }
+    ]
+}

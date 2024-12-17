@@ -1,85 +1,35 @@
 from libra_toolbox.tritium.model import ureg, Model, quantity_to_activity
 import numpy as np
 import json
-from libra_toolbox.tritium.lsc_measurements import (
-    LSCFileReader,
-    LIBRASample,
-    LIBRARun,
-    LSCSample,
-    GasStream,
-)
+from libra_toolbox.tritium.lsc_measurements import LIBRARun
+from helpers import create_sample, create_gas_streams
 from datetime import datetime
 
-
-data_folder = "../../data/tritium_detection"
-
-# read files
-file_reader_1 = LSCFileReader(
-    f"{data_folder}/1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
-    labels_column="SMPL_ID",
-)
-file_reader_1.read_file()
-
-
-# Make samples
-
-# read times from general.json
+lsc_data_folder = "../../data/tritium_detection"
 with open("../../data/general.json", "r") as f:
     general_data = json.load(f)
 
 
-def make_libra_sample(file_reader: LSCFileReader, label: str, stream: str):
-    time_sample = datetime.strptime(
-        general_data["timestamps"]["lsc_sample_times"][stream][f"{label}-x"]["actual"],
-        "%m/%d/%Y %H:%M",
-    )
-    sample = LIBRASample(
-        samples=[
-            LSCSample.from_file(file_reader, label)
-            for label in [
-                f"1L-{stream}_{label}-1",
-                f"1L-{stream}_{label}-2",
-                f"1L-{stream}_{label}-3",
-                f"1L-{stream}_{label}-4",
-            ]
-        ],
-        time=time_sample,
-    )
-    return sample
-
-
-sample_1_IV = make_libra_sample(file_reader_1, "2-1", "IV")
-sample_2_IV = make_libra_sample(file_reader_1, "2-2", "IV")
-
-# Make streams
+# Make samples
+with open(f"{lsc_data_folder}/data.json", "r") as f:
+    lsc_data = json.load(f)
+list_of_samples = [
+    create_sample(sample["label"], f"{lsc_data_folder}/{sample["filename"]}")
+    for sample in lsc_data["samples"]
+]
 
 # read start time from general.json
-
 all_start_times = []
 for generator in general_data["timestamps"]["generators"]:
     start_time = datetime.strptime(generator["on"], "%m/%d/%Y %H:%M")
     all_start_times.append(start_time)
-start_time_as_datetime = min(all_start_times)
-start_time = start_time_as_datetime.strftime("%m/%d/%Y %H:%M %p")
+start_time = min(all_start_times)
 
-IV_stream = GasStream(
-    [
-        sample_1_IV,
-        sample_2_IV,
-    ],
+IV_stream, OV_stream = create_gas_streams(
+    samples=list_of_samples,
     start_time=start_time,
+    general_data=general_data,
 )
-OV_stream = GasStream(
-    [],
-    start_time=start_time,
-)
-
-# substract background
-for sample in [sample_1_IV, sample_2_IV]:
-    sample.substract_background(
-        background_sample=LSCSample.from_file(file_reader_1, "1L-BL-1")
-    )
-
 
 # create run
 run = LIBRARun(streams=[IV_stream, OV_stream], start_time=start_time)
@@ -110,12 +60,8 @@ baby_height = baby_volume / baby_cross_section
 
 irradiations = []
 for generator in general_data["timestamps"]["generators"]:
-    irr_start_time = (
-        datetime.strptime(generator["on"], "%m/%d/%Y %H:%M") - start_time_as_datetime
-    )
-    irr_stop_time = (
-        datetime.strptime(generator["off"], "%m/%d/%Y %H:%M") - start_time_as_datetime
-    )
+    irr_start_time = datetime.strptime(generator["on"], "%m/%d/%Y %H:%M") - start_time
+    irr_stop_time = datetime.strptime(generator["off"], "%m/%d/%Y %H:%M") - start_time
     irr_start_time = irr_start_time.total_seconds() * ureg.second
     irr_stop_time = irr_stop_time.total_seconds() * ureg.second
     irradiations.append([irr_start_time, irr_stop_time])
