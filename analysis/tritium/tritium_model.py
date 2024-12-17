@@ -28,36 +28,32 @@ with open("../../data/general.json", "r") as f:
     general_data = json.load(f)
 
 
-time_sample_1_IV = datetime.strptime(
-    general_data["timestamps"]["lsc_sample_times"]["IV"]["2-1-x"]["actual"],
-    "%m/%d/%Y %H:%M",
-)
-sample_1_IV = LIBRASample(
-    samples=[
-        LSCSample.from_file(file_reader_1, label)
-        for label in ["1L-IV_2-1-1", "1L-IV_2-1-2", "1L-IV_2-1-3", "1L-IV_2-1-4"]
-    ],
-    time=time_sample_1_IV,
-)
+def make_libra_sample(file_reader: LSCFileReader, label: str, stream: str):
+    time_sample = datetime.strptime(
+        general_data["timestamps"]["lsc_sample_times"][stream][f"{label}-x"]["actual"],
+        "%m/%d/%Y %H:%M",
+    )
+    sample = LIBRASample(
+        samples=[
+            LSCSample.from_file(file_reader, label)
+            for label in [
+                f"1L-{stream}_{label}-1",
+                f"1L-{stream}_{label}-2",
+                f"1L-{stream}_{label}-3",
+                f"1L-{stream}_{label}-4",
+            ]
+        ],
+        time=time_sample,
+    )
+    return sample
 
-time_sample_2_IV = datetime.strptime(
-    general_data["timestamps"]["lsc_sample_times"]["IV"]["2-2-x"]["actual"],
-    "%m/%d/%Y %H:%M",
-)
-sample_2_IV = LIBRASample(
-    samples=[
-        LSCSample.from_file(file_reader_1, label)
-        for label in ["1L-IV_2-2-1", "1L-IV_2-2-2", "1L-IV_2-2-3", "1L-IV_2-2-4"]
-    ],
-    time=time_sample_2_IV,
-)
 
+sample_1_IV = make_libra_sample(file_reader_1, "2-1", "IV")
+sample_2_IV = make_libra_sample(file_reader_1, "2-2", "IV")
 
 # Make streams
 
 # read start time from general.json
-with open("../../data/general.json", "r") as f:
-    general_data = json.load(f)
 
 all_start_times = []
 for generator in general_data["timestamps"]["generators"]:
