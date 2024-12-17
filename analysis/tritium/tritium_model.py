@@ -25,14 +25,16 @@ for generator in general_data["timestamps"]["generators"]:
     all_start_times.append(start_time)
 start_time = min(all_start_times)
 
-IV_stream, OV_stream = create_gas_streams(
+streams = create_gas_streams(
     samples=list_of_samples,
     start_time=start_time,
     general_data=general_data,
 )
+IV_stream = streams["IV"]
+# OV_stream = streams["OV"]  # TODO add this back
 
 # create run
-run = LIBRARun(streams=[IV_stream, OV_stream], start_time=start_time)
+run = LIBRARun(streams=[IV_stream], start_time=start_time)  # TODO add , OV_stream
 
 # check that background is always substracted
 for stream in run.streams:
@@ -44,7 +46,9 @@ for stream in run.streams:
 
 
 replacement_times_top = sorted(IV_stream.relative_times_as_pint)
-replacement_times_walls = [] * ureg.h  # sorted(OV_stream.relative_times_as_pint)
+replacement_times_walls = (
+    [] * ureg.h
+)  # sorted(OV_stream.relative_times_as_pint)# TODO add this back
 
 
 # tritium model
@@ -103,7 +107,7 @@ total_irradiation_time = sum([irr[1] - irr[0] for irr in irradiations])
 T_consumed = neutron_rate * total_irradiation_time
 T_produced = (
     IV_stream.get_cumulative_activity("total")[-1]
-    # + OV_stream.get_cumulative_activity("total")[-1]
+    # + OV_stream.get_cumulative_activity("total")[-1]  # TODO add this back
 )
 
 measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
