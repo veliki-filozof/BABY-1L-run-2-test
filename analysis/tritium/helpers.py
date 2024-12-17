@@ -1,10 +1,10 @@
 from typing import Dict
 from datetime import datetime
+import re
 from typing import List, Dict, Tuple
 from libra_toolbox.tritium.lsc_measurements import (
     LSCFileReader,
     LIBRASample,
-    LIBRARun,
     LSCSample,
     GasStream,
 )
@@ -120,21 +120,18 @@ def create_gas_streams(
     return IV_stream, OV_stream
 
 
-def extract_info_from_label(label: str) -> Dict[str, str]:
-    # check that it has the following format
-    # [volume]-[stream]_[run nb]-[sample nb]-[vial nb]
-    if len(label.split("-")) != 4 or len(label.split("_")) != 2:
+def extract_info_from_label(label: str, pattern: str = None) -> Dict[str, str]:
+    # Define a regex pattern for the label format
+    if not pattern:
+        pattern = r"^(?P<volume>\d+[A-Za-z]*)-(?P<stream>[A-Za-z]+)_(?P<run_nb>\d+)-(?P<sample_nb>\d+)-(?P<vial_nb>\d+)$"
+
+    # Match the label against the pattern
+    match = re.match(pattern, label)
+
+    if not match:
         raise ValueError(
-            f"Label {label} does not have the correct format [volume]-[stream]_[run nb]-[sample nb]-[vial nb] (eg. 1L-IV_1-1-1)"
+            f"Label {label} does not have the correct format [volume]-[stream]_[run nb]-[sample nb]-[vial nb] (e.g., 1L-IV_1-1-1)"
         )
-    # extract volume, stream, run_nb, sample_nb, vial_nb from the label
-    volume_stream, run_sample_vial = label.split("_")
-    volume, stream = volume_stream.split("-")
-    run_nb, sample_nb, vial_nb = run_sample_vial.split("-")
-    return {
-        "volume": volume,
-        "stream": stream,
-        "run_nb": run_nb,
-        "sample_nb": sample_nb,
-        "vial_nb": vial_nb,
-    }
+
+    # Return the matched components as a dictionary
+    return match.groupdict()
