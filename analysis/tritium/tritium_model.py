@@ -11,11 +11,10 @@ with open("../../data/general.json", "r") as f:
 
 
 # Make samples
-with open(f"{lsc_data_folder}/data.json", "r") as f:
-    lsc_data = json.load(f)
+lsc_data = general_data["lsc_samples"]
 list_of_samples = [
     create_sample(sample["label"], f"{lsc_data_folder}/{sample["filename"]}")
-    for sample in lsc_data["samples"]
+    for sample in lsc_data
 ]
 
 # read start time from general.json
