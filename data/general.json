@@ -2,7 +2,10 @@
     "general_data": {
         "description": "Pure 1 L ClLiF, test run",
         "salt": "ClLiF",
-        "salt_mass": null,
+        "salt_mass": {
+            "value": 1.88,
+            "unit": "kg"
+        },
         "temperature_salt": {
             "value": 627,
             "unit": "degC",
