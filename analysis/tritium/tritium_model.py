@@ -31,10 +31,10 @@ streams = create_gas_streams(
     general_data=general_data,
 )
 IV_stream = streams["IV"]
-# OV_stream = streams["OV"]  # TODO add this back
+OV_stream = streams["OV"]
 
 # create run
-run = LIBRARun(streams=[IV_stream], start_time=start_time)  # TODO add , OV_stream
+run = LIBRARun(streams=[IV_stream, OV_stream], start_time=start_time)
 
 # check that background is always substracted
 for stream in run.streams:
@@ -46,9 +46,7 @@ for stream in run.streams:
 
 
 replacement_times_top = sorted(IV_stream.relative_times_as_pint)
-replacement_times_walls = (
-    [] * ureg.h
-)  # sorted(OV_stream.relative_times_as_pint)# TODO add this back
+replacement_times_walls = sorted(OV_stream.relative_times_as_pint)
 
 
 # tritium model
