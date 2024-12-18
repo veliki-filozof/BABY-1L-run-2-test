@@ -16,6 +16,16 @@ all_file_readers = []
 
 
 def create_sample(label: str, filename: str) -> LSCSample:
+    """
+    Create a LSCSample from a LSC file with background substracted.
+
+    Args:
+        label: the label of the sample in the LSC file
+        filename: the filename of the LSC file
+
+    Returns:
+        the LSCSample object
+    """
     # check if a LSCFileReader has been created for this filename
     found = False
     for file_reader in all_file_readers:
@@ -39,6 +49,9 @@ def create_sample(label: str, filename: str) -> LSCSample:
     except ValueError:
         background_label = "1L-BL-2"
         background_sample = LSCSample.from_file(file_reader, background_label)
+    else:
+        if background_sample is None:
+            raise ValueError(f"Background sample not found in {filename}")
 
     # substract background
     sample.substract_background(background_sample)
@@ -64,6 +77,7 @@ for generator in general_data["generators"]:
 start_time = min(all_start_times)
 
 
+# create gas streams
 gas_streams = {}
 for stream, samples in general_data["tritium_detection"].items():
     stream_samples = []
@@ -88,7 +102,7 @@ for stream, samples in general_data["tritium_detection"].items():
 # create run
 run = LIBRARun(streams=list(gas_streams.values()), start_time=start_time)
 
-# check that background is always substracted
+# check that background is always substracted  # TODO this should be done automatically in LIBRARun
 for stream in run.streams:
     for sample in stream.samples:
         for lsc_vial in sample.samples:
@@ -112,7 +126,6 @@ baby_cross_section = np.pi * baby_radius**2
 baby_height = baby_volume / baby_cross_section
 
 # read irradiation times from general.json
-
 
 irradiations = []
 for generator in general_data["generators"]:
