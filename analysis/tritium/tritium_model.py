@@ -55,9 +55,12 @@ run_nb = general_data["general_data"]["run_nb"]
 
 # read start time from general.json
 all_start_times = []
-for generator in general_data["timestamps"]["generators"]:
-    start_time = datetime.strptime(generator["on"], "%m/%d/%Y %H:%M")
-    all_start_times.append(start_time)
+for generator in general_data["generators"]:
+    if generator["enabled"] is False:
+        continue
+    for irradiation_period in generator["periods"]:
+        start_time = datetime.strptime(irradiation_period["start"], "%m/%d/%Y %H:%M")
+        all_start_times.append(start_time)
 start_time = min(all_start_times)
 
 
@@ -112,12 +115,20 @@ baby_height = baby_volume / baby_cross_section
 
 
 irradiations = []
-for generator in general_data["timestamps"]["generators"]:
-    irr_start_time = datetime.strptime(generator["on"], "%m/%d/%Y %H:%M") - start_time
-    irr_stop_time = datetime.strptime(generator["off"], "%m/%d/%Y %H:%M") - start_time
-    irr_start_time = irr_start_time.total_seconds() * ureg.second
-    irr_stop_time = irr_stop_time.total_seconds() * ureg.second
-    irradiations.append([irr_start_time, irr_stop_time])
+for generator in general_data["generators"]:
+    if generator["enabled"] is False:
+        continue
+    for irradiation_period in generator["periods"]:
+        irr_start_time = (
+            datetime.strptime(irradiation_period["start"], "%m/%d/%Y %H:%M")
+            - start_time
+        )
+        irr_stop_time = (
+            datetime.strptime(irradiation_period["end"], "%m/%d/%Y %H:%M") - start_time
+        )
+        irr_start_time = irr_start_time.total_seconds() * ureg.second
+        irr_stop_time = irr_stop_time.total_seconds() * ureg.second
+        irradiations.append([irr_start_time, irr_stop_time])
 
 # Neutron rate
 # calculated from Kevin's activation foil analysis from run 100 mL #7
