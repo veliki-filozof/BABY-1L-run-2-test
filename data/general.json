@@ -1,6 +1,7 @@
 {
     "general_data": {
         "description": "Pure 1 L ClLiF, test run",
+        "run_nb": 2,
         "salt": "ClLiF",
         "salt_mass": {
             "value": 1.88,
@@ -118,10 +119,10 @@
     },
     "timestamps": {
         "heater": {
-            "on": "11/2/2024 15:45:00",
+            "on": "11/2/2024 15:45",
             "off": null
         },
-        "run_start": "12/9/2024 12:13:00",
+        "run_start": "12/9/2024 12:13",
         "generators": [
             {
                 "name": "P-383",
