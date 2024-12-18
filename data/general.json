@@ -255,6 +255,92 @@
             }
         }
     },
+    "tritium_detection": {
+        "IV": {
+            "0": {
+                "planned_sample_time": "12/10/2024 10:51",
+                "actual_sample_time": "12/10/2024 10:32",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "2": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "3": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "4": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+                }
+            },
+            "1": {
+                "planned_sample_time": "12/11/2024 10:51",
+                "actual_sample_time": "12/11/2024 9:15",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "2": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "3": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "4": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+                }
+            },
+            "2": {
+                "planned_sample_time": "12/12/2024 10:51",
+                "actual_sample_time": "12/12/2024 9:00",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "2": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "3": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "4": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv"
+                }
+            },
+            "3": {
+                "planned_sample_time": "12/14/2024 10:51",
+                "actual_sample_time": "12/14/2024 12:58",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "2": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "3": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "4": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv"
+                }
+            },
+            "4": {
+                "planned_sample_time": "12/16/2024 10:51",
+                "actual_sample_time": "12/16/2024 12:49",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "2": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "3": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv",
+                    "4": "1L_BL-2_IV-2-3_IV-2-4_IV-2-2.csv"
+                }
+            }
+        },
+        "OV": {
+            "0": {
+                "planned_sample_time": "11/4/2024 9:30",
+                "actual_sample_time": "12/10/2024 10:32",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "2": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "3": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv",
+                    "4": "1L_BL-2_IV-2-0_OV-2-0_IV-2-1_IV-2-2.csv"
+                }
+            },
+            "1": {
+                "planned_sample_time": "12/19/2024 10:51",
+                "actual_sample_time": null,
+                "lsc_vials_filenames": {
+                    "1": null,
+                    "2": null,
+                    "3": null,
+                    "4": null
+                }
+            },
+            "2": {
+                "planned_sample_time": "1/14/2025 10:51",
+                "actual_sample_time": null,
+                "lsc_vials_filenames": {
+                    "1": null,
+                    "2": null,
+                    "3": null,
+                    "4": null
+                }
+            }
+        }
+    },
     "lsc_samples": [
         {
             "label": "1L-OV_2-0-1",
