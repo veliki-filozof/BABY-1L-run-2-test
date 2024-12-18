@@ -113,8 +113,13 @@ for stream in run.streams:
 IV_stream = gas_streams["IV"]
 OV_stream = gas_streams["OV"]
 
-replacement_times_top = sorted(IV_stream.relative_times_as_pint)
-replacement_times_walls = sorted(OV_stream.relative_times_as_pint)
+sampling_times = {
+    "IV": sorted(IV_stream.relative_times_as_pint),
+    "OV": sorted(OV_stream.relative_times_as_pint),
+}
+
+replacement_times_top = sampling_times["IV"]
+replacement_times_walls = sampling_times["OV"]
 
 
 # tritium model
@@ -241,27 +246,23 @@ processed_data = {
         "value": k_wall.magnitude,
         "unit": str(k_wall.units),
     },
-    "sampling_times_top": [
-        {
-            "value": time.magnitude.tolist(),
-            "unit": str(time.units),
+    "cumulative_tritium_release": {
+        label: {
+            **{
+                form: {
+                    "value": gas_stream.get_cumulative_activity(
+                        form
+                    ).magnitude.tolist(),
+                    "unit": str(gas_stream.get_cumulative_activity(form).units),
+                }
+                for form in ["total", "soluble", "insoluble"]
+            },
+            "sampling_times": {
+                "value": gas_stream.relative_times_as_pint.magnitude.tolist(),
+                "unit": str(gas_stream.relative_times_as_pint.units),
+            },
         }
-        for time in replacement_times_top
-    ],
-    "sampling_times_wall": [
-        {
-            "value": time.magnitude.tolist(),
-            "unit": str(time.units),
-        }
-        for time in replacement_times_walls
-    ],
-    "cumulative_release_top": {
-        "value": gas_streams["IV"].get_cumulative_activity("total").magnitude.tolist(),
-        "unit": str(gas_streams["IV"].get_cumulative_activity("total").units),
-    },
-    "cumulative_release_wall": {
-        "value": gas_streams["OV"].get_cumulative_activity("total").magnitude.tolist(),
-        "unit": str(gas_streams["OV"].get_cumulative_activity("total").units),
+        for label, gas_stream in gas_streams.items()
     },
 }
 
