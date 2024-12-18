@@ -200,3 +200,78 @@ baby_model = Model(
     k_top=k_top,
     k_wall=k_wall,
 )
+
+
+# store processed data
+processed_data = {
+    "modelled_baby_radius": {
+        "value": baby_radius.magnitude,
+        "unit": str(baby_radius.units),
+    },
+    "modelled_baby_height": {
+        "value": baby_height.magnitude,
+        "unit": str(baby_height.units),
+    },
+    "irradiations": [
+        {
+            "start_time": {
+                "value": irr[0].magnitude,
+                "unit": str(irr[0].units),
+            },
+            "stop_time": {
+                "value": irr[1].magnitude,
+                "unit": str(irr[1].units),
+            },
+        }
+        for irr in irradiations
+    ],
+    "neutron_rate": {
+        "value": neutron_rate.magnitude,
+        "unit": str(neutron_rate.units),
+    },
+    "measured_TBR": {
+        "value": measured_TBR.magnitude,
+        "unit": str(measured_TBR.units),
+    },
+    "k_top": {
+        "value": k_top.magnitude,
+        "unit": str(k_top.units),
+    },
+    "k_wall": {
+        "value": k_wall.magnitude,
+        "unit": str(k_wall.units),
+    },
+    "sampling_times_top": [
+        {
+            "value": time.magnitude.tolist(),
+            "unit": str(time.units),
+        }
+        for time in replacement_times_top
+    ],
+    "sampling_times_wall": [
+        {
+            "value": time.magnitude.tolist(),
+            "unit": str(time.units),
+        }
+        for time in replacement_times_walls
+    ],
+    "cumulative_release_top": {
+        "value": gas_streams["IV"].get_cumulative_activity("total").magnitude.tolist(),
+        "unit": str(gas_streams["IV"].get_cumulative_activity("total").units),
+    },
+    "cumulative_release_wall": {
+        "value": gas_streams["OV"].get_cumulative_activity("total").magnitude.tolist(),
+        "unit": str(gas_streams["OV"].get_cumulative_activity("total").units),
+    },
+}
+
+processed_data_file = "../../data/processed_data.json"
+with open(processed_data_file, "r") as f:
+    existing_data = json.load(f)
+
+existing_data.update(processed_data)
+
+with open(processed_data_file, "w") as f:
+    json.dump(existing_data, f, indent=4)
+
+print(f"Processed data stored in {processed_data_file}")
