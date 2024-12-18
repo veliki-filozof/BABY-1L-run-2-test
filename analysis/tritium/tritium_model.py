@@ -265,9 +265,16 @@ processed_data = {
     },
 }
 
+# check if the file exists and load it
+
 processed_data_file = "../../data/processed_data.json"
-with open(processed_data_file, "r") as f:
-    existing_data = json.load(f)
+
+try:
+    with open(processed_data_file, "r") as f:
+        existing_data = json.load(f)
+except FileNotFoundError:
+    print(f"Processed data file not found, creating it in {processed_data_file}")
+    existing_data = {}
 
 existing_data.update(processed_data)
 
