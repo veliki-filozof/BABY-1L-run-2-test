@@ -1,41 +1,108 @@
 from libra_toolbox.tritium.model import ureg, Model, quantity_to_activity
 import numpy as np
 import json
-from libra_toolbox.tritium.lsc_measurements import LIBRARun
-from helpers import create_sample, create_gas_streams
+from libra_toolbox.tritium.lsc_measurements import (
+    LIBRARun,
+    LSCFileReader,
+    GasStream,
+    LSCSample,
+    LIBRASample,
+)
+
 from datetime import datetime
+
+
+all_file_readers = []
+
+
+def create_sample(label: str, filename: str) -> LSCSample:
+    """
+    Create a LSCSample from a LSC file with background substracted.
+
+    Args:
+        label: the label of the sample in the LSC file
+        filename: the filename of the LSC file
+
+    Returns:
+        the LSCSample object
+    """
+    # check if a LSCFileReader has been created for this filename
+    found = False
+    for file_reader in all_file_readers:
+        if file_reader.filename == filename:
+            found = True
+            break
+
+    # if not, create it and add it to the list of LSCFileReaders
+    if not found:
+        file_reader = LSCFileReader(filename, labels_column="SMPL_ID")
+
+    file_reader.read_file()
+
+    # create the sample
+    sample = LSCSample.from_file(file_reader, label)
+
+    # try to find the background sample from the file
+    try:
+        background_label = "1L-BL-1"
+        background_sample = LSCSample.from_file(file_reader, background_label)
+    except ValueError:
+        background_label = "1L-BL-2"
+        background_sample = LSCSample.from_file(file_reader, background_label)
+    else:
+        if background_sample is None:
+            raise ValueError(f"Background sample not found in {filename}")
+
+    # substract background
+    sample.substract_background(background_sample)
+
+    return sample
+
 
 lsc_data_folder = "../../data/tritium_detection"
 with open("../../data/general.json", "r") as f:
     general_data = json.load(f)
 
+run_nb = general_data["general_data"]["run_nb"]
 
-# Make samples
-lsc_data = general_data["lsc_samples"]
-list_of_samples = [
-    create_sample(sample["label"], f"{lsc_data_folder}/{sample["filename"]}")
-    for sample in lsc_data
-]
 
 # read start time from general.json
 all_start_times = []
-for generator in general_data["timestamps"]["generators"]:
-    start_time = datetime.strptime(generator["on"], "%m/%d/%Y %H:%M")
-    all_start_times.append(start_time)
+for generator in general_data["generators"]:
+    if generator["enabled"] is False:
+        continue
+    for irradiation_period in generator["periods"]:
+        start_time = datetime.strptime(irradiation_period["start"], "%m/%d/%Y %H:%M")
+        all_start_times.append(start_time)
 start_time = min(all_start_times)
 
-streams = create_gas_streams(
-    samples=list_of_samples,
-    start_time=start_time,
-    general_data=general_data,
-)
-IV_stream = streams["IV"]
-OV_stream = streams["OV"]
+
+# create gas streams
+gas_streams = {}
+for stream, samples in general_data["tritium_detection"].items():
+    stream_samples = []
+    for sample_nb, sample_dict in samples.items():
+        libra_samples = []
+        if sample_dict["actual_sample_time"] is None:
+            continue
+        for vial_nb, filename in sample_dict["lsc_vials_filenames"].items():
+            sample = create_sample(
+                label=f"1L-{stream}_{run_nb}-{sample_nb}-{vial_nb}",
+                filename=f"{lsc_data_folder}/{filename}",
+            )
+            libra_samples.append(sample)
+
+        time_sample = datetime.strptime(
+            sample_dict["actual_sample_time"], "%m/%d/%Y %H:%M"
+        )
+        stream_samples.append(LIBRASample(libra_samples, time=time_sample))
+    gas_streams[stream] = GasStream(stream_samples, start_time=start_time)
+
 
 # create run
-run = LIBRARun(streams=[IV_stream, OV_stream], start_time=start_time)
+run = LIBRARun(streams=list(gas_streams.values()), start_time=start_time)
 
-# check that background is always substracted
+# check that background is always substracted  # TODO this should be done automatically in LIBRARun
 for stream in run.streams:
     for sample in stream.samples:
         for lsc_vial in sample.samples:
@@ -43,6 +110,8 @@ for stream in run.streams:
                 lsc_vial.background_substracted
             ), f"Background not substracted for {sample}"
 
+IV_stream = gas_streams["IV"]
+OV_stream = gas_streams["OV"]
 
 replacement_times_top = sorted(IV_stream.relative_times_as_pint)
 replacement_times_walls = sorted(OV_stream.relative_times_as_pint)
@@ -58,14 +127,21 @@ baby_height = baby_volume / baby_cross_section
 
 # read irradiation times from general.json
 
-
 irradiations = []
-for generator in general_data["timestamps"]["generators"]:
-    irr_start_time = datetime.strptime(generator["on"], "%m/%d/%Y %H:%M") - start_time
-    irr_stop_time = datetime.strptime(generator["off"], "%m/%d/%Y %H:%M") - start_time
-    irr_start_time = irr_start_time.total_seconds() * ureg.second
-    irr_stop_time = irr_stop_time.total_seconds() * ureg.second
-    irradiations.append([irr_start_time, irr_stop_time])
+for generator in general_data["generators"]:
+    if generator["enabled"] is False:
+        continue
+    for irradiation_period in generator["periods"]:
+        irr_start_time = (
+            datetime.strptime(irradiation_period["start"], "%m/%d/%Y %H:%M")
+            - start_time
+        )
+        irr_stop_time = (
+            datetime.strptime(irradiation_period["end"], "%m/%d/%Y %H:%M") - start_time
+        )
+        irr_start_time = irr_start_time.total_seconds() * ureg.second
+        irr_stop_time = irr_stop_time.total_seconds() * ureg.second
+        irradiations.append([irr_start_time, irr_stop_time])
 
 # Neutron rate
 # calculated from Kevin's activation foil analysis from run 100 mL #7
@@ -102,9 +178,8 @@ calculated_TBR_std_dev = (
 total_irradiation_time = sum([irr[1] - irr[0] for irr in irradiations])
 
 T_consumed = neutron_rate * total_irradiation_time
-T_produced = (
-    IV_stream.get_cumulative_activity("total")[-1]
-    # + OV_stream.get_cumulative_activity("total")[-1]  # TODO add this back
+T_produced = sum(
+    [stream.get_cumulative_activity("total")[-1] for stream in run.streams]
 )
 
 measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
