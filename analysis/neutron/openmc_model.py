@@ -416,4 +416,35 @@ he.set_density("g/cm3", density)
 
 
 if __name__ == "__main__":
-    baby_model().run()
+    model = baby_model()
+    model.run()
+    sp = openmc.StatePoint(f"statepoint.{model.settings.batches}.h5")
+    tbr_tally = sp.get_tally(name="TBR").get_pandas_dataframe()
+
+    print(f"TBR: {tbr_tally['mean'].iloc[0] :.6e}\n")
+    print(f"TBR std. dev.: {tbr_tally['std. dev.'].iloc[0] :.6e}\n")
+
+    processed_data = {
+        "modelled_TBR": {
+            "mean": tbr_tally["mean"].iloc[0],
+            "std_dev": tbr_tally["std. dev."].iloc[0],
+        }
+    }
+
+    import json
+
+    processed_data_file = "../../data/processed_data.json"
+
+    try:
+        with open(processed_data_file, "r") as f:
+            existing_data = json.load(f)
+    except FileNotFoundError:
+        print(f"Processed data file not found, creating it in {processed_data_file}")
+        existing_data = {}
+
+    existing_data.update(processed_data)
+
+    with open(processed_data_file, "w") as f:
+        json.dump(existing_data, f, indent=4)
+
+    print(f"Processed data stored in {processed_data_file}")
