@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - processed-data
 
 jobs:
   commit-to-main:
@@ -39,24 +38,10 @@ jobs:
           python tritium_model.py
           jupyter-nbconvert --to notebook tritium_model.ipynb --execute
 
-      # # Check if there are any changes
-      # - name: Check for changes
-      #   id: check_changes
-      #   run: |
-      #     if git diff --quiet; then
-      #       echo "No changes to commit."
-      #       echo "changes=false" >> $GITHUB_ENV
-      #     else
-      #       echo "Changes detected."
-      #       echo "changes=true" >> $GITHUB_ENV
-      #     fi
-
-      # Commit and push changes if there are any
       - name: Commit and Push Changes
-        # if: env.changes == 'true'
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
           git add data/processed_data.json
           git commit -m "Automated data processing ${date}"
-          git push origin processed-data
+          git push origin main
