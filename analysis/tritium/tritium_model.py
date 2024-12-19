@@ -230,21 +230,25 @@ processed_data = {
         }
         for irr in irradiations
     ],
-    "neutron_rate": {
-        "value": neutron_rate.magnitude,
-        "unit": str(neutron_rate.units),
+    "neutron_rate_used_in_model": {
+        "value": baby_model.neutron_rate.magnitude,
+        "unit": str(baby_model.neutron_rate.units),
     },
     "measured_TBR": {
         "value": measured_TBR.magnitude,
         "unit": str(measured_TBR.units),
     },
+    "TBR_used_in_model": {
+        "value": baby_model.TBR.magnitude,
+        "unit": str(baby_model.TBR.units),
+    },
     "k_top": {
-        "value": k_top.magnitude,
-        "unit": str(k_top.units),
+        "value": baby_model.k_top.magnitude,
+        "unit": str(baby_model.k_top.units),
     },
     "k_wall": {
-        "value": k_wall.magnitude,
-        "unit": str(k_wall.units),
+        "value": baby_model.k_wall.magnitude,
+        "unit": str(baby_model.k_wall.units),
     },
     "cumulative_tritium_release": {
         label: {
