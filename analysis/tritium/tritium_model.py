@@ -113,8 +113,13 @@ for stream in run.streams:
 IV_stream = gas_streams["IV"]
 OV_stream = gas_streams["OV"]
 
-replacement_times_top = sorted(IV_stream.relative_times_as_pint)
-replacement_times_walls = sorted(OV_stream.relative_times_as_pint)
+sampling_times = {
+    "IV": sorted(IV_stream.relative_times_as_pint),
+    "OV": sorted(OV_stream.relative_times_as_pint),
+}
+
+replacement_times_top = sampling_times["IV"]
+replacement_times_walls = sampling_times["OV"]
 
 
 # tritium model
@@ -200,3 +205,85 @@ baby_model = Model(
     k_top=k_top,
     k_wall=k_wall,
 )
+
+
+# store processed data
+processed_data = {
+    "modelled_baby_radius": {
+        "value": baby_radius.magnitude,
+        "unit": str(baby_radius.units),
+    },
+    "modelled_baby_height": {
+        "value": baby_height.magnitude,
+        "unit": str(baby_height.units),
+    },
+    "irradiations": [
+        {
+            "start_time": {
+                "value": irr[0].magnitude,
+                "unit": str(irr[0].units),
+            },
+            "stop_time": {
+                "value": irr[1].magnitude,
+                "unit": str(irr[1].units),
+            },
+        }
+        for irr in irradiations
+    ],
+    "neutron_rate_used_in_model": {
+        "value": baby_model.neutron_rate.magnitude,
+        "unit": str(baby_model.neutron_rate.units),
+    },
+    "measured_TBR": {
+        "value": measured_TBR.magnitude,
+        "unit": str(measured_TBR.units),
+    },
+    "TBR_used_in_model": {
+        "value": baby_model.TBR.magnitude,
+        "unit": str(baby_model.TBR.units),
+    },
+    "k_top": {
+        "value": baby_model.k_top.magnitude,
+        "unit": str(baby_model.k_top.units),
+    },
+    "k_wall": {
+        "value": baby_model.k_wall.magnitude,
+        "unit": str(baby_model.k_wall.units),
+    },
+    "cumulative_tritium_release": {
+        label: {
+            **{
+                form: {
+                    "value": gas_stream.get_cumulative_activity(
+                        form
+                    ).magnitude.tolist(),
+                    "unit": str(gas_stream.get_cumulative_activity(form).units),
+                }
+                for form in ["total", "soluble", "insoluble"]
+            },
+            "sampling_times": {
+                "value": gas_stream.relative_times_as_pint.magnitude.tolist(),
+                "unit": str(gas_stream.relative_times_as_pint.units),
+            },
+        }
+        for label, gas_stream in gas_streams.items()
+    },
+}
+
+# check if the file exists and load it
+
+processed_data_file = "../../data/processed_data.json"
+
+try:
+    with open(processed_data_file, "r") as f:
+        existing_data = json.load(f)
+except FileNotFoundError:
+    print(f"Processed data file not found, creating it in {processed_data_file}")
+    existing_data = {}
+
+existing_data.update(processed_data)
+
+with open(processed_data_file, "w") as f:
+    json.dump(existing_data, f, indent=4)
+
+print(f"Processed data stored in {processed_data_file}")
