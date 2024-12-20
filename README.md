@@ -1,6 +1,6 @@
 # libra-run-template
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.INSERT-DOI.svg)](https://doi.org/10.5281/zenodo.INSERT-DOI)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14532208.svg)](https://doi.org/10.5281/zenodo.14532208)
 
 This is a template repository for experimental runs of LIBRA.
 
@@ -30,10 +30,10 @@ conda env create -f environment.yml
 - [ ] Add neutron detection data to [`data/neutron_detection`](data/neutron_detection)
 - [x] Add OpenMC model to [`analysis/neutron`](analysis/neutron)
 - [x] Add Tritium model to [`analysis/tritium`](analysis/tritium)
-- [ ] Add the right version tags to [`environment.yml`](environment.yml)
+- [x] Add the right version tags to [`environment.yml`](environment.yml)
 - [x] Add and update information in the README
 - [x] Modify [binder](https://mybinder.org/) badge by inserting the repo name
 - [ ] Update [CI workflows](.github/workflows)
-- [ ] Make first release on GitHub
-- [ ] Update Zenodo badge with new DOI
-- [ ] Link Zenodo record (created automatically) to the [LIBRA-project Zenodo community](https://zenodo.org/communities/libra-project/records)
+- [x] Make first release on GitHub
+- [x] Update Zenodo badge with new DOI
+- [x] Link Zenodo record (created automatically) to the [LIBRA-project Zenodo community](https://zenodo.org/communities/libra-project/records)
