@@ -53,6 +53,7 @@ def build_vault_model(
         libraries=["ENDFB-8.0-NNDC"],
         set_OPENMC_CROSS_SECTIONS=True,
         particles=["neutron"],
+        destination="cross_sections",
     )
     #
     # Definition of the spherical void/blackhole boundary
