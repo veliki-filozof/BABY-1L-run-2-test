@@ -192,7 +192,7 @@ measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
 )
 
 optimised_ratio = 1.7e-2
-k_top = 8.9e-8 * ureg.m * ureg.s**-1
+k_top = 0.6*8.9e-8 * ureg.m * ureg.s**-1
 k_wall = optimised_ratio * k_top
 
 
@@ -200,7 +200,7 @@ baby_model = Model(
     radius=baby_radius,
     height=baby_height,
     TBR=calculated_TBR,  # TODO replace by measured_TBR
-    neutron_rate=neutron_rate,
+    neutron_rate=1.3*neutron_rate,
     irradiations=irradiations,
     k_top=k_top,
     k_wall=k_wall,
