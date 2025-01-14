@@ -271,7 +271,18 @@
                     "3": "1L_BL-2_IV-2-7_2-8_2-9.csv",
                     "4": "1L_BL-2_IV-2-7_2-8_2-9.csv"
                 }
+            },
+            "10":{
+                "planned_sample_time": "1/11/2025 10:51",
+                "actual_sample_time": "1/11/2025 18:51",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-10.csv",
+                    "2": "1L_BL-2_IV-2-10.csv",
+                    "3": "1L_BL-2_IV-2-10.csv",
+                    "4": "1L_BL-2_IV-2-10.csv"
+                }
             }
+
         },
         "OV": {
             "0": {
