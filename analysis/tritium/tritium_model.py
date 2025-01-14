@@ -159,6 +159,10 @@ neutron_rate = (
     P383_neutron_rate
 ) / 2  # the neutron rate is divided by two to acount for the double counting (two detectors)
 
+
+# correction factor
+neutron_rate *= 1.3
+
 # TBR from OpenMC
 
 from pathlib import Path
@@ -200,7 +204,7 @@ baby_model = Model(
     radius=baby_radius,
     height=baby_height,
     TBR=calculated_TBR,  # TODO replace by measured_TBR
-    neutron_rate=1.3*neutron_rate,
+    neutron_rate=neutron_rate,
     irradiations=irradiations,
     k_top=k_top,
     k_wall=k_wall,
