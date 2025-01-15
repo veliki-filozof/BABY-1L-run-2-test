@@ -167,7 +167,7 @@ neutron_rate = (
 
 
 # correction factor
-neutron_rate *= 1.3
+neutron_rate *= 1.18
 
 # TBR from OpenMC
 
@@ -201,9 +201,8 @@ measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
     ureg.particle * ureg.neutron**-1
 )
 
-optimised_ratio = 1.7e-2
-k_top = 0.6*8.9e-8 * ureg.m * ureg.s**-1
-k_wall = optimised_ratio * k_top
+k_top = 0.7*8.9e-8 * ureg.m * ureg.s**-1
+k_wall = 0 * ureg.m * ureg.s**-1
 
 
 baby_model = Model(
