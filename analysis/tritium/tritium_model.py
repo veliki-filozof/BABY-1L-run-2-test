@@ -13,7 +13,7 @@ from datetime import datetime
 
 
 all_file_readers = []
-
+all_quench = []
 
 def create_sample(label: str, filename: str) -> LSCSample:
     """
@@ -55,6 +55,9 @@ def create_sample(label: str, filename: str) -> LSCSample:
 
     # substract background
     sample.substract_background(background_sample)
+
+    # read quench set
+    all_quench.append(file_reader.quench_set)
 
     return sample
 
@@ -101,6 +104,9 @@ for stream, samples in general_data["tritium_detection"].items():
 
 # create run
 run = LIBRARun(streams=list(gas_streams.values()), start_time=start_time)
+
+# check that only one quench set is used
+assert len(np.unique(all_quench)) == 1
 
 # check that background is always substracted  # TODO this should be done automatically in LIBRARun
 for stream in run.streams:
