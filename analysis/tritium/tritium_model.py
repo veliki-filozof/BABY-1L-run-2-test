@@ -155,19 +155,9 @@ for generator in general_data["generators"]:
         irradiations.append([irr_start_time, irr_stop_time])
 
 # Neutron rate
-# calculated from Kevin's activation foil analysis from run 100 mL #7
-# TODO replace for values for this run
-P383_neutron_rate = 4.95e8 * ureg.neutron * ureg.s**-1
-A325_neutron_rate = 2.13e8 * ureg.neutron * ureg.s**-1
+neutron_rate_relative_uncertainty = 0.089  # TODO check with Collin what is the uncertainty on this measurement
 
-neutron_rate_relative_uncertainty = 0.089
-neutron_rate = (
-    P383_neutron_rate
-) / 2  # the neutron rate is divided by two to acount for the double counting (two detectors)
-
-
-# correction factor
-neutron_rate *= 1.18
+neutron_rate = 2.611e+08 * ureg.neutron * ureg.s**-1  # TODO from Collin's foil analysis, replace with more robust method
 
 # TBR from OpenMC
 
@@ -208,7 +198,7 @@ k_wall = 0 * ureg.m * ureg.s**-1
 baby_model = Model(
     radius=baby_radius,
     height=baby_height,
-    TBR=calculated_TBR,  # TODO replace by measured_TBR
+    TBR=measured_TBR,
     neutron_rate=neutron_rate,
     irradiations=irradiations,
     k_top=k_top,
