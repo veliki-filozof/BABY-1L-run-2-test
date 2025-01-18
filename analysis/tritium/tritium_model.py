@@ -13,7 +13,7 @@ from datetime import datetime
 
 
 all_file_readers = []
-
+all_quench = []
 
 def create_sample(label: str, filename: str) -> LSCSample:
     """
@@ -55,6 +55,9 @@ def create_sample(label: str, filename: str) -> LSCSample:
 
     # substract background
     sample.substract_background(background_sample)
+
+    # read quench set
+    all_quench.append(file_reader.quench_set)
 
     return sample
 
@@ -101,6 +104,9 @@ for stream, samples in general_data["tritium_detection"].items():
 
 # create run
 run = LIBRARun(streams=list(gas_streams.values()), start_time=start_time)
+
+# check that only one quench set is used
+assert len(np.unique(all_quench)) == 1
 
 # check that background is always substracted  # TODO this should be done automatically in LIBRARun
 for stream in run.streams:
@@ -149,15 +155,9 @@ for generator in general_data["generators"]:
         irradiations.append([irr_start_time, irr_stop_time])
 
 # Neutron rate
-# calculated from Kevin's activation foil analysis from run 100 mL #7
-# TODO replace for values for this run
-P383_neutron_rate = 4.95e8 * ureg.neutron * ureg.s**-1
-A325_neutron_rate = 2.13e8 * ureg.neutron * ureg.s**-1
+neutron_rate_relative_uncertainty = 0.089  # TODO check with Collin what is the uncertainty on this measurement
 
-neutron_rate_relative_uncertainty = 0.089
-neutron_rate = (
-    P383_neutron_rate
-) / 2  # the neutron rate is divided by two to acount for the double counting (two detectors)
+neutron_rate = 2.611e+08 * ureg.neutron * ureg.s**-1  # TODO from Collin's foil analysis, replace with more robust method
 
 # TBR from OpenMC
 
@@ -191,15 +191,14 @@ measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
     ureg.particle * ureg.neutron**-1
 )
 
-optimised_ratio = 1.7e-2
-k_top = 8.9e-8 * ureg.m * ureg.s**-1
-k_wall = optimised_ratio * k_top
+k_top = 0.7*8.9e-8 * ureg.m * ureg.s**-1
+k_wall = 0 * ureg.m * ureg.s**-1
 
 
 baby_model = Model(
     radius=baby_radius,
     height=baby_height,
-    TBR=calculated_TBR,  # TODO replace by measured_TBR
+    TBR=measured_TBR,
     neutron_rate=neutron_rate,
     irradiations=irradiations,
     k_top=k_top,
