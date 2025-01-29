@@ -47,8 +47,12 @@ def create_sample(label: str, filename: str) -> LSCSample:
         background_label = "1L-BL-1"
         background_sample = LSCSample.from_file(file_reader, background_label)
     except ValueError:
-        background_label = "1L-BL-2"
-        background_sample = LSCSample.from_file(file_reader, background_label)
+        try:
+            background_label = "1L-BL-2"
+            background_sample = LSCSample.from_file(file_reader, background_label)
+        except ValueError:
+            background_label = "1L-BL-3"
+            background_sample = LSCSample.from_file(file_reader, background_label)
     else:
         if background_sample is None:
             raise ValueError(f"Background sample not found in {filename}")
