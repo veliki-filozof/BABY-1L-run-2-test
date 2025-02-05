@@ -20,7 +20,7 @@ if __name__ == "__main__":
     data_day_1_part_1 = DataProcessor()
     add_files_from_folder(
         data_proc=data_day_1_part_1,
-        folder=f"{path_to_data_folder}/Single diamond/20241210_LIBRA/UNFILTERED/",
+        folder=f"{path_to_data_folder}/20241210_part1/UNFILTERED/",
     )
     np.save(
         f"{path_to_data_folder}/binary_data_day_1_part_1.npy",
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     data_proc_day_1_part2 = DataProcessor()
     add_files_from_folder(
         data_proc=data_proc_day_1_part2,
-        folder=f"{path_to_data_folder}/Single diamond/20241210_LIBRA_part2/UNFILTERED/",
+        folder=f"{path_to_data_folder}/20241210_part2/UNFILTERED/",
     )
     np.save(
         f"{path_to_data_folder}/binary_data_day_1_part_2.npy",
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     data_proc_day_2 = DataProcessor()
     add_files_from_folder(
         data_proc=data_proc_day_2,
-        folder=f"{path_to_data_folder}/Single diamond/20241211_LIBRA/DAQ/LIBRA_run2/UNFILTERED",
+        folder=f"{path_to_data_folder}/20241211/UNFILTERED",
     )
     np.save(
         f"{path_to_data_folder}/binary_data_day_2.npy",
