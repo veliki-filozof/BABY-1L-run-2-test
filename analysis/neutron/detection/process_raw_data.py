@@ -2,51 +2,36 @@ import numpy as np
 from libra_toolbox.neutron_detection.diamond.process_data import DataProcessor
 from pathlib import Path
 
-path_to_data_folder = "../../../data/neutron_detection"
 
-
-def add_files_from_folder(folder, data_proc: DataProcessor):
+def process_and_save_data(folder, output_file):
     """
     Add all csv files from a folder to the data processor
     """
+    data_proc = DataProcessor()
     for filename in Path(folder).rglob("*.CSV"):
         data_proc.add_file(
             filename, time_column=2, energy_column=3, delimiter=";", skip_header=1
         )
+    np.save(output_file, np.array([data_proc.time_values, data_proc.energy_values]))
 
 
 if __name__ == "__main__":
+    path_to_data_folder = "../../../data/neutron_detection"
+
     # day 1 data part 1
-    data_day_1_part_1 = DataProcessor()
-    add_files_from_folder(
-        data_proc=data_day_1_part_1,
-        folder=f"{path_to_data_folder}/20241210_part1/UNFILTERED/",
-    )
-    np.save(
-        f"{path_to_data_folder}/binary_data_day_1_part_1.npy",
-        np.array([data_day_1_part_1.time_values, data_day_1_part_1.energy_values]),
+    process_and_save_data(
+        folder=f"{path_to_data_folder}/20241210_part1/UNFILTERED",
+        output_file=f"{path_to_data_folder}/binary_data_day_1_part_1.npy",
     )
 
     # day 1 data part 2
-    data_proc_day_1_part2 = DataProcessor()
-    add_files_from_folder(
-        data_proc=data_proc_day_1_part2,
-        folder=f"{path_to_data_folder}/20241210_part2/UNFILTERED/",
-    )
-    np.save(
-        f"{path_to_data_folder}/binary_data_day_1_part_2.npy",
-        np.array(
-            [data_proc_day_1_part2.time_values, data_proc_day_1_part2.energy_values]
-        ),
+    process_and_save_data(
+        folder=f"{path_to_data_folder}/20241210_part2/UNFILTERED",
+        output_file=f"{path_to_data_folder}/binary_data_day_1_part_2.npy",
     )
 
     # day 2 data
-    data_proc_day_2 = DataProcessor()
-    add_files_from_folder(
-        data_proc=data_proc_day_2,
+    process_and_save_data(
         folder=f"{path_to_data_folder}/20241211/UNFILTERED",
-    )
-    np.save(
-        f"{path_to_data_folder}/binary_data_day_2.npy",
-        np.array([data_proc_day_2.time_values, data_proc_day_2.energy_values]),
+        output_file=f"{path_to_data_folder}/binary_data_day_2.npy",
     )
