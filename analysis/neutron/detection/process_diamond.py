@@ -75,7 +75,9 @@ for generator in general_data["generators"]:
 # -------- plot data ----------------
 
 s_to_h = 1 / 3600
+
 plt.figure(figsize=(13, 5))
+
 for i, data_proc in enumerate(
     [data_day_1_part_1, data_proc_day_1_part2, data_proc_day_2]
 ):
@@ -83,6 +85,7 @@ for i, data_proc in enumerate(
     plt.plot(bins[:-1] * s_to_h, rates, color="tab:grey", linewidth=0.1)
     plt.fill_between(bins[:-1] * s_to_h, rates, alpha=0.3, color="tab:grey")
 
+# plot irradiations from logbook
 for i, irr in enumerate(irradiations):
     plt.fill_betweenx(
         [1600, 1800],
@@ -100,7 +103,7 @@ plt.annotate(
     color="#EF5B5B",
 )
 
-
+# line for no aquisition period
 plt.hlines(y=1000, xmin=5, xmax=9, linestyles="dashed", color="black")
 plt.annotate("no aquisition", (7, 1000), xytext=(7, 1100), ha="center", va="center")
 
