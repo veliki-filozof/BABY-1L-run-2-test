@@ -42,20 +42,19 @@ def create_sample(label: str, filename: str) -> LSCSample:
     # create the sample
     sample = LSCSample.from_file(file_reader, label)
 
-    # try to find the background sample from the file
-    try:
-        background_label = "1L-BL-1"
-        background_sample = LSCSample.from_file(file_reader, background_label)
-    except ValueError:
+   # try to find the background sample from the file
+    background_labels = ["1L-BL-1", "1L-BL-2", "1L-BL-3"]
+    background_sample = None
+
+    for background_label in background_labels:
         try:
-            background_label = "1L-BL-2"
             background_sample = LSCSample.from_file(file_reader, background_label)
+            break
         except ValueError:
-            background_label = "1L-BL-3"
-            background_sample = LSCSample.from_file(file_reader, background_label)
-    else:
-        if background_sample is None:
-            raise ValueError(f"Background sample not found in {filename}")
+            continue
+
+    if background_sample is None:
+        raise ValueError(f"Background sample not found in {filename}")
 
     # substract background
     sample.substract_background(background_sample)
