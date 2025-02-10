@@ -1,12 +1,13 @@
 import pandas as pd
-from typing import List, Dict
+import numpy as np
+from typing import List, Dict, Union
 import pint
 import pint.facets
 from libra_toolbox.tritium import ureg
 from datetime import datetime, timedelta
 import warnings
 from typing import Literal
-
+from collections import defaultdict
 
 # config
 DATE_FORMAT = "%m/%d/%Y %I:%M %p"
@@ -80,14 +81,18 @@ class LSCFileReader:
         assert self.data is not None
         return self.data["Bq:1"].tolist()
 
-    def get_bq1_values_with_labels(self) -> Dict[str | None, float]:
-        """Returns a dictionary with vial labels as keys and Bq:1 values as values
+    def get_bq1_values_with_labels(self) -> Dict[str | None, Union[float, List[float]]]:
+        """Returns a dictionary with vial labels as keys and Bq:1 values as values.
+    
+        If all labels have exactly one associated value, returns Dict[str | None, float].
+        If at least one label has multiple values, returns Dict[str | None, List[float]].
 
         Raises:
-            ValueError: If vial labels are not provided
+            ValueError: If vial labels are not provided.
 
         Returns:
-            Dictionary with vial labels as keys and Bq:1 values as values
+            Dict[str | None, Union[float, List[float]]]: Dictionary with vial labels as keys 
+            and either single float values or lists of values.
         """
         if self.vial_labels is None:
             raise ValueError("Vial labels must be provided")
@@ -95,11 +100,18 @@ class LSCFileReader:
         assert len(self.vial_labels) == len(
             self.get_bq1_values()
         ), "Vial labels and Bq:1 values are not equal in length, remember to give None as a label for missing vials"
-
+        
+        # Collect values in a defaultdict (list) to handle multiple occurrences
         values = self.get_bq1_values()
-        labelled_values = {label: val for label, val in zip(self.vial_labels, values)}
+        labelled_values = defaultdict(list)
+        for label, value in zip(self.vial_labels, values):
+            labelled_values[label].append(value)
 
-        return labelled_values
+        # Convert lists to single float values if all labels have exactly one value
+        if all(len(v) == 1 for v in labelled_values.values()):
+            return {k: v[0] for k, v in labelled_values.items()}  # Dict[str | None, float]
+
+        return dict(labelled_values)  # Dict[str | None, List[float]]
 
     def get_count_times(self) -> List[float]:
         assert self.data is not None
@@ -112,17 +124,34 @@ class LSCFileReader:
 
 class LSCSample:
     activity: pint.Quantity
+    stdev: pint.Quantity
     origin_file: str | None
 
-    def __init__(self, activity: pint.Quantity, name: str):
-        self.activity = activity
+    def __init__(self, activity: pint.Quantity | List[pint.Quantity], name: str):
         self.name = name
+        self.repeated = isinstance(activity, list)
+        if self.repeated:
+            self.activity = np.mean(activity)
+            self.stdev = np.std(activity, ddof=1)
+        else:
+            self.activity = activity
+            self.stdev = 0.0 * ureg.Bq
         # TODO add other attributes available in LSC file
         self.background_substracted = False
         self.origin_file = None
 
     def __str__(self):
         return f"Sample {self.name}"
+    
+    @staticmethod
+    def stdev_addition(stdevs: List[pint.Quantity]) -> pint.Quantity:
+        """Calculates standard deviation of summed variables
+
+        Args:
+            stdevs (List[pint.Quantity]): List of standard deviations of individual variables
+        """
+        result = np.sqrt(np.sum(std**2 for std in stdevs))
+        return result
 
     def substract_background(self, background_sample: "LSCSample"):
         """Substracts the background activity from the sample activity
@@ -141,6 +170,7 @@ class LSCSample:
                 f"Activity of {self.name} is negative after substracting background. Setting to zero."
             )
             self.activity = 0 * ureg.Bq
+        self.stdev = self.stdev_addition([self.stdev,background_sample.stdev])
         self.background_substracted = True
 
     @staticmethod
@@ -189,22 +219,59 @@ class LIBRASample:
         for sample in self.samples:
             sample.substract_background(background_sample)
 
-    def get_soluble_activity(self):
+    def get_soluble_activity(self, is_repeated = False):
+        """Returns total activity of soluble samples
+        If counts are repeated, returns standard deviation as well
+        Backwards compatible with single counts
+
+        Args:
+            is_repeated (Boolean): Send True if standard deviation is needed
+
+        Returns:
+            tuple containing activity and standard deviation if repeated
+            activity otherwise
+        """
         act = 0
+        stdev = 0
         for sample in self.samples[:2]:
             act += sample.activity
+            stdev = LSCSample.stdev_addition([stdev, sample.stdev])
 
-        return act
+        return (act, stdev) if is_repeated else act
 
-    def get_insoluble_activity(self):
+    def get_insoluble_activity(self, is_repeated = False):
+        """Returns total activity of insoluble samples
+        If counts are repeated, returns standard deviation as well
+        Backwards compatible with single counts
+
+        Args:
+            is_repeated (Boolean): Send True if standard deviation is needed
+        
+        Returns:
+            tuple containing activity and standard deviation if repeated
+            activity otherwise
+        """
         act = 0
+        stdev = 0
         for sample in self.samples[2:]:
             act += sample.activity
+            stdev = LSCSample.stdev_addition([stdev, sample.stdev])
 
-        return act
+        return (act, stdev) if is_repeated else act
 
-    def get_total_activity(self):
-        return self.get_soluble_activity() + self.get_insoluble_activity()
+    def get_total_activity(self, is_repeated = False):
+        """Returns total activity of samples
+        If counts are repeated, returns standard deviation as well
+        Backwards compatible with single counts
+
+        Args:
+            is_repeated (Boolean): Send True if standard deviation is needed
+
+        Returns:
+            tuple containing activity and standard deviation if repeated
+            activity otherwise
+        """
+        return self.get_soluble_activity(is_repeated) + self.get_insoluble_activity(is_repeated)
 
 
 class GasStream:
