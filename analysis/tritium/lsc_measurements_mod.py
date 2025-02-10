@@ -92,7 +92,7 @@ class LSCFileReader:
 
         Returns:
             Dict[str | None, Union[float, List[float]]]: Dictionary with vial labels as keys 
-            and either single float values or lists of values.
+            and either single float values or, for repeat counts, lists of values.
         """
         if self.vial_labels is None:
             raise ValueError("Vial labels must be provided")
@@ -219,18 +219,19 @@ class LIBRASample:
         for sample in self.samples:
             sample.substract_background(background_sample)
 
-    def get_soluble_activity(self, is_repeated = False):
+    def get_soluble_activity(self):
         """Returns total activity of soluble samples
         If counts are repeated, returns standard deviation as well
         Backwards compatible with single counts
 
-        Args:
-            is_repeated (Boolean): Send True if standard deviation is needed
-
         Returns:
-            tuple containing activity and standard deviation if repeated
-            activity otherwise
+            tuple containing activity and standard deviation if repeated,
+            activity only otherwise
         """
+        is_repeated = any(
+            sample.repeated
+            for sample in self.samples
+        )
         act = 0
         stdev = 0
         for sample in self.samples[:2]:
@@ -243,14 +244,15 @@ class LIBRASample:
         """Returns total activity of insoluble samples
         If counts are repeated, returns standard deviation as well
         Backwards compatible with single counts
-
-        Args:
-            is_repeated (Boolean): Send True if standard deviation is needed
         
         Returns:
-            tuple containing activity and standard deviation if repeated
-            activity otherwise
+            tuple containing activity and standard deviation if repeated,
+            activity only otherwise
         """
+        is_repeated = any(
+            sample.repeated
+            for sample in self.samples
+        )
         act = 0
         stdev = 0
         for sample in self.samples[2:]:
@@ -264,14 +266,11 @@ class LIBRASample:
         If counts are repeated, returns standard deviation as well
         Backwards compatible with single counts
 
-        Args:
-            is_repeated (Boolean): Send True if standard deviation is needed
-
         Returns:
-            tuple containing activity and standard deviation if repeated
-            activity otherwise
+            tuple containing activity and standard deviation if repeated,
+            activity only otherwise
         """
-        return self.get_soluble_activity(is_repeated) + self.get_insoluble_activity(is_repeated)
+        return self.get_soluble_activity() + self.get_insoluble_activity()
 
 
 class GasStream:
