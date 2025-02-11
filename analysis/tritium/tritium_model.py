@@ -43,12 +43,13 @@ def create_sample(
     for file_reader in all_file_readers:
         if file_reader.filename == filename:
             found = True
-            if file_reader.filename == background_filename:
-                found_background = True
-        elif file_reader.filename == background_filename:
+            file_reader_main = file_reader
+        if file_reader.filename == background_filename:
             found_background = True
+            file_reader_background = file_reader
         if found and found_background:
             break
+    file_reader = file_reader_main
 
     # if not, create it or them and add to the list of LSCFileReaders
     if not found:
@@ -77,11 +78,10 @@ def create_sample(
         if background_sample is None:
             raise ValueError(f"Background sample not found in {background_filename}")
     else:
-        background_sample = None
         try:
             background_sample = LSCSample.from_file(file_reader_background, background_label)
-        except ValueError:
-            raise ValueError(f"Background sample not found in {background_filename}")
+        except ValueError as e:
+            raise ValueError(f"Background sample '{background_label}' not found in {background_filename}: {str(e)}")
 
 
 
