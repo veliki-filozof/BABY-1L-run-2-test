@@ -1,7 +1,7 @@
 from libra_toolbox.tritium.model import ureg, Model, quantity_to_activity
 import numpy as np
 import json
-from libra_toolbox.tritium.lsc_measurements import (
+from lsc_measurements_mod import (
     LIBRARun,
     LSCFileReader,
     GasStream,
