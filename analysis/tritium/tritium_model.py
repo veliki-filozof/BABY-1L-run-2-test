@@ -15,46 +15,75 @@ from datetime import datetime
 all_file_readers = []
 all_quench = []
 
-def create_sample(label: str, filename: str) -> LSCSample:
+def create_sample(
+        label: str, 
+        filename: str, 
+        background_filename: str = None, 
+        background_label: str = None
+        ) -> LSCSample:
     """
     Create a LSCSample from a LSC file with background substracted.
 
     Args:
         label: the label of the sample in the LSC file
         filename: the filename of the LSC file
+        background_filename: the filename of the LSC file containing background count
+        background_label: label of the background vial
 
     Returns:
         the LSCSample object
     """
-    # check if a LSCFileReader has been created for this filename
+
+    if background_filename is None:
+        background_filename = filename
+
+    # check if a LSCFileReader has been created for the filename and background_filename
     found = False
+    found_background = False
     for file_reader in all_file_readers:
         if file_reader.filename == filename:
             found = True
+            if file_reader.filename == background_filename:
+                found_background = True
+        elif file_reader.filename == background_filename:
+            found_background = True
+        if found and found_background:
             break
 
-    # if not, create it and add it to the list of LSCFileReaders
+    # if not, create it or them and add to the list of LSCFileReaders
     if not found:
         file_reader = LSCFileReader(filename, labels_column="SMPL_ID")
+    if not found_background:
+        file_reader_background = LSCFileReader(background_filename, labels_column="SMPL_ID")
 
     file_reader.read_file()
+    file_reader_background.read_file()
 
     # create the sample
     sample = LSCSample.from_file(file_reader, label)
 
    # try to find the background sample from the file
-    background_labels = ["1L-BL-1", "1L-BL-2", "1L-BL-3"]
-    background_sample = None
+    if background_label is None:
+        background_labels = ["1L-BL-1", "1L-BL-2", "1L-BL-3"]
+        background_sample = None
 
-    for background_label in background_labels:
+        for background_label in background_labels:
+            try:
+                background_sample = LSCSample.from_file(file_reader_background, background_label)
+                break
+            except ValueError:
+                continue
+
+        if background_sample is None:
+            raise ValueError(f"Background sample not found in {background_filename}")
+    else:
+        background_sample = None
         try:
-            background_sample = LSCSample.from_file(file_reader, background_label)
-            break
+            background_sample = LSCSample.from_file(file_reader_background, background_label)
         except ValueError:
-            continue
+            raise ValueError(f"Background sample not found in {background_filename}")
 
-    if background_sample is None:
-        raise ValueError(f"Background sample not found in {filename}")
+
 
     # substract background
     sample.substract_background(background_sample)
