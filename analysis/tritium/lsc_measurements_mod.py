@@ -240,7 +240,7 @@ class LIBRASample:
 
         return (act, stdev) if is_repeated else act
 
-    def get_insoluble_activity(self, is_repeated = False):
+    def get_insoluble_activity(self):
         """Returns total activity of insoluble samples
         If counts are repeated, returns standard deviation as well
         Backwards compatible with single counts
@@ -261,7 +261,7 @@ class LIBRASample:
 
         return (act, stdev) if is_repeated else act
 
-    def get_total_activity(self, is_repeated = False):
+    def get_total_activity(self):
         """Returns total activity of samples
         If counts are repeated, returns standard deviation as well
         Backwards compatible with single counts
