@@ -250,13 +250,21 @@ T_produced = sum(
     [stream.get_cumulative_activity("total")[-1] for stream in run.streams]
 )
 T_produced_repeat = sum(
-    [stream.get_cumulative_activity("total")[-1] for stream in run_repeat.streams]
+    [stream.get_cumulative_activity("total")[0][-1] for stream in run_repeat.streams]
+)
+T_produced_repeat_stdev = LSCSample.stdev_addition(
+    [stream.get_cumulative_activity("total")[1][-1] for stream in run_repeat.streams]
 )
 
 measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
     ureg.particle * ureg.neutron**-1
 )
 measured_TBR_repeat = (T_produced_repeat / quantity_to_activity(T_consumed)).to(
+    ureg.particle * ureg.neutron**-1
+)
+measured_TBR_repeat_stdev = measured_TBR_repeat * np.sqrt(
+    (T_produced_repeat_stdev / T_produced_repeat)**2 + neutron_rate_relative_uncertainty**2
+).to(
     ureg.particle * ureg.neutron**-1
 )
 
