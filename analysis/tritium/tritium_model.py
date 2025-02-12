@@ -114,10 +114,13 @@ start_time = min(all_start_times)
 
 # create gas streams
 gas_streams = {}
+gas_streams_repeat = {}
 for stream, samples in general_data["tritium_detection"].items():
     stream_samples = []
+    stream_samples_repeat = []
     for sample_nb, sample_dict in samples.items():
         libra_samples = []
+        libra_samples_repeat = []
         if sample_dict["actual_sample_time"] is None:
             continue
         for vial_nb, filename in sample_dict["lsc_vials_filenames"].items():
@@ -126,16 +129,35 @@ for stream, samples in general_data["tritium_detection"].items():
                 filename=f"{lsc_data_folder}/{filename}",
             )
             libra_samples.append(sample)
+        for vial_nb, filename_repeat in sample_dict["repeat_count_filenames"].items():
+            if filename_repeat is None:
+                # Create a zero sample and tag it as background substracted
+                empty_sample = LSCSample(
+                    activity=0 * ureg.Bq,
+                    name=f"1L-{stream}_{run_nb}-{sample_nb}-{vial_nb}"
+                )
+                empty_sample.background_substracted = True
+                libra_samples_repeat.append(sample)
+            else:
+                sample = create_sample(
+                    label=f"1L-{stream}_{run_nb}-{sample_nb}-{vial_nb}",
+                    filename=f"{lsc_data_folder}/{filename_repeat}",
+                    background_filename=f"{lsc_data_folder}/{sample_dict["repeat_background_filename"]}"
+                )
+                libra_samples_repeat.append(sample)
 
         time_sample = datetime.strptime(
             sample_dict["actual_sample_time"], "%m/%d/%Y %H:%M"
         )
         stream_samples.append(LIBRASample(libra_samples, time=time_sample))
+        stream_samples_repeat.append(LIBRASample(libra_samples_repeat, time=time_sample))
     gas_streams[stream] = GasStream(stream_samples, start_time=start_time)
+    gas_streams_repeat[stream] = GasStream(stream_samples_repeat, start_time=start_time)
 
 
 # create run
 run = LIBRARun(streams=list(gas_streams.values()), start_time=start_time)
+run_repeat = LIBRARun(streams=list(gas_streams_repeat.values()), start_time=start_time)
 
 # check that only one quench set is used
 assert len(np.unique(all_quench)) == 1
@@ -147,9 +169,18 @@ for stream in run.streams:
             assert (
                 lsc_vial.background_substracted
             ), f"Background not substracted for {sample}"
+for stream in run_repeat.streams:
+    for sample in stream.samples:
+        for lsc_vial in sample.samples:
+            assert (
+                lsc_vial.background_substracted
+            ), f"Background not substracted for {sample}, repeat count"
 
 IV_stream = gas_streams["IV"]
 OV_stream = gas_streams["OV"]
+
+IV_stream_repeat = gas_streams_repeat["IV"]
+OV_stream_repeat = gas_streams_repeat["OV"]
 
 sampling_times = {
     "IV": sorted(IV_stream.relative_times_as_pint),
@@ -218,8 +249,14 @@ T_consumed = neutron_rate * total_irradiation_time
 T_produced = sum(
     [stream.get_cumulative_activity("total")[-1] for stream in run.streams]
 )
+T_produced_repeat = sum(
+    [stream.get_cumulative_activity("total")[-1] for stream in run_repeat.streams]
+)
 
 measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
+    ureg.particle * ureg.neutron**-1
+)
+measured_TBR_repeat = (T_produced_repeat / quantity_to_activity(T_consumed)).to(
     ureg.particle * ureg.neutron**-1
 )
 
@@ -236,7 +273,15 @@ baby_model = Model(
     k_top=k_top,
     k_wall=k_wall,
 )
-
+baby_model_repeat = Model(
+    radius=baby_radius,
+    height=baby_height,
+    TBR=measured_TBR_repeat,
+    neutron_rate=neutron_rate,
+    irradiations=irradiations,
+    k_top=k_top,
+    k_wall=k_wall,
+)
 
 # store processed data
 processed_data = {
