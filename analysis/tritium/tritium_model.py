@@ -40,6 +40,8 @@ def create_sample(
     # check if a LSCFileReader has been created for the filename and background_filename
     found = False
     found_background = False
+    file_reader_main = None
+    file_reader_background = None
     for file_reader in all_file_readers:
         if file_reader.filename == filename:
             found = True
@@ -136,8 +138,10 @@ for stream, samples in general_data["tritium_detection"].items():
                     activity=0 * ureg.Bq,
                     name=f"1L-{stream}_{run_nb}-{sample_nb}-{vial_nb}"
                 )
+                empty_sample.repeated = True # act as if sample is repeated
                 empty_sample.background_substracted = True
-                libra_samples_repeat.append(sample)
+                empty_sample.stdev = sample_dict["minimum_detectable_activity_bq"] * ureg.Bq
+                libra_samples_repeat.append(empty_sample)
             else:
                 sample = create_sample(
                     label=f"1L-{stream}_{run_nb}-{sample_nb}-{vial_nb}",
@@ -262,9 +266,7 @@ measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
 measured_TBR_repeat = (T_produced_repeat / quantity_to_activity(T_consumed)).to(
     ureg.particle * ureg.neutron**-1
 )
-measured_TBR_repeat_stdev = measured_TBR_repeat * np.sqrt(
-    (T_produced_repeat_stdev / T_produced_repeat)**2 + neutron_rate_relative_uncertainty**2
-).to(
+measured_TBR_repeat_stdev = (T_produced_repeat_stdev / quantity_to_activity(T_consumed)).to(
     ureg.particle * ureg.neutron**-1
 )
 
