@@ -15,46 +15,77 @@ from datetime import datetime
 all_file_readers = []
 all_quench = []
 
-def create_sample(label: str, filename: str) -> LSCSample:
+def create_sample(
+        label: str, 
+        filename: str, 
+        background_filename: str = None, 
+        background_label: str = None
+        ) -> LSCSample:
     """
     Create a LSCSample from a LSC file with background substracted.
 
     Args:
         label: the label of the sample in the LSC file
         filename: the filename of the LSC file
+        background_filename: the filename of the LSC file containing background count
+        background_label: label of the background vial
 
     Returns:
         the LSCSample object
     """
-    # check if a LSCFileReader has been created for this filename
+
+    if background_filename is None:
+        background_filename = filename
+
+    # check if a LSCFileReader has been created for the filename and background_filename
     found = False
+    found_background = False
+    file_reader_main = None
+    file_reader_background = None
     for file_reader in all_file_readers:
         if file_reader.filename == filename:
             found = True
+            file_reader_main = file_reader
+        if file_reader.filename == background_filename:
+            found_background = True
+            file_reader_background = file_reader
+        if found and found_background:
             break
+    file_reader = file_reader_main
 
-    # if not, create it and add it to the list of LSCFileReaders
+    # if not, create it or them and add to the list of LSCFileReaders
     if not found:
         file_reader = LSCFileReader(filename, labels_column="SMPL_ID")
+    if not found_background:
+        file_reader_background = LSCFileReader(background_filename, labels_column="SMPL_ID")
 
     file_reader.read_file()
+    file_reader_background.read_file()
 
     # create the sample
     sample = LSCSample.from_file(file_reader, label)
 
    # try to find the background sample from the file
-    background_labels = ["1L-BL-1", "1L-BL-2", "1L-BL-3"]
-    background_sample = None
+    if background_label is None:
+        background_labels = ["1L-BL-1", "1L-BL-2", "1L-BL-3"]
+        background_sample = None
 
-    for background_label in background_labels:
+        for background_label in background_labels:
+            try:
+                background_sample = LSCSample.from_file(file_reader_background, background_label)
+                break
+            except ValueError:
+                continue
+
+        if background_sample is None:
+            raise ValueError(f"Background sample not found in {background_filename}")
+    else:
         try:
-            background_sample = LSCSample.from_file(file_reader, background_label)
-            break
-        except ValueError:
-            continue
+            background_sample = LSCSample.from_file(file_reader_background, background_label)
+        except ValueError as e:
+            raise ValueError(f"Background sample '{background_label}' not found in {background_filename}: {str(e)}")
 
-    if background_sample is None:
-        raise ValueError(f"Background sample not found in {filename}")
+
 
     # substract background
     sample.substract_background(background_sample)
@@ -85,10 +116,13 @@ start_time = min(all_start_times)
 
 # create gas streams
 gas_streams = {}
+gas_streams_repeat = {}
 for stream, samples in general_data["tritium_detection"].items():
     stream_samples = []
+    stream_samples_repeat = []
     for sample_nb, sample_dict in samples.items():
         libra_samples = []
+        libra_samples_repeat = []
         if sample_dict["actual_sample_time"] is None:
             continue
         for vial_nb, filename in sample_dict["lsc_vials_filenames"].items():
@@ -97,16 +131,37 @@ for stream, samples in general_data["tritium_detection"].items():
                 filename=f"{lsc_data_folder}/{filename}",
             )
             libra_samples.append(sample)
+        for vial_nb, filename_repeat in sample_dict["repeat_count_filenames"].items():
+            if filename_repeat is None:
+                # Create a zero sample and tag it as background substracted
+                empty_sample = LSCSample(
+                    activity=0 * ureg.Bq,
+                    name=f"1L-{stream}_{run_nb}-{sample_nb}-{vial_nb}"
+                )
+                empty_sample.repeated = True # act as if sample is repeated
+                empty_sample.background_substracted = True
+                empty_sample.stdev = sample_dict["minimum_detectable_activity_bq"] * ureg.Bq
+                libra_samples_repeat.append(empty_sample)
+            else:
+                sample = create_sample(
+                    label=f"1L-{stream}_{run_nb}-{sample_nb}-{vial_nb}",
+                    filename=f"{lsc_data_folder}/{filename_repeat}",
+                    background_filename=f"{lsc_data_folder}/{sample_dict["repeat_background_filename"]}"
+                )
+                libra_samples_repeat.append(sample)
 
         time_sample = datetime.strptime(
             sample_dict["actual_sample_time"], "%m/%d/%Y %H:%M"
         )
         stream_samples.append(LIBRASample(libra_samples, time=time_sample))
+        stream_samples_repeat.append(LIBRASample(libra_samples_repeat, time=time_sample))
     gas_streams[stream] = GasStream(stream_samples, start_time=start_time)
+    gas_streams_repeat[stream] = GasStream(stream_samples_repeat, start_time=start_time)
 
 
 # create run
 run = LIBRARun(streams=list(gas_streams.values()), start_time=start_time)
+run_repeat = LIBRARun(streams=list(gas_streams_repeat.values()), start_time=start_time)
 
 # check that only one quench set is used
 assert len(np.unique(all_quench)) == 1
@@ -118,9 +173,18 @@ for stream in run.streams:
             assert (
                 lsc_vial.background_substracted
             ), f"Background not substracted for {sample}"
+for stream in run_repeat.streams:
+    for sample in stream.samples:
+        for lsc_vial in sample.samples:
+            assert (
+                lsc_vial.background_substracted
+            ), f"Background not substracted for {sample}, repeat count"
 
 IV_stream = gas_streams["IV"]
 OV_stream = gas_streams["OV"]
+
+IV_stream_repeat = gas_streams_repeat["IV"]
+OV_stream_repeat = gas_streams_repeat["OV"]
 
 sampling_times = {
     "IV": sorted(IV_stream.relative_times_as_pint),
@@ -189,8 +253,20 @@ T_consumed = neutron_rate * total_irradiation_time
 T_produced = sum(
     [stream.get_cumulative_activity("total")[-1] for stream in run.streams]
 )
+T_produced_repeat = sum(
+    [stream.get_cumulative_activity("total")[0][-1] for stream in run_repeat.streams]
+)
+T_produced_repeat_stdev = LSCSample.stdev_addition(
+    [stream.get_cumulative_activity("total")[1][-1] for stream in run_repeat.streams]
+)
 
 measured_TBR = (T_produced / quantity_to_activity(T_consumed)).to(
+    ureg.particle * ureg.neutron**-1
+)
+measured_TBR_repeat = (T_produced_repeat / quantity_to_activity(T_consumed)).to(
+    ureg.particle * ureg.neutron**-1
+)
+measured_TBR_repeat_stdev = (T_produced_repeat_stdev / quantity_to_activity(T_consumed)).to(
     ureg.particle * ureg.neutron**-1
 )
 
@@ -207,7 +283,15 @@ baby_model = Model(
     k_top=k_top,
     k_wall=k_wall,
 )
-
+baby_model_repeat = Model(
+    radius=baby_radius,
+    height=baby_height,
+    TBR=measured_TBR_repeat,
+    neutron_rate=neutron_rate,
+    irradiations=irradiations,
+    k_top=k_top,
+    k_wall=k_wall,
+)
 
 # store processed data
 processed_data = {

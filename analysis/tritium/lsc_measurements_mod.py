@@ -80,7 +80,7 @@ class LSCFileReader:
     def get_bq1_values(self) -> List[float]:
         assert self.data is not None
         return self.data["Bq:1"].tolist()
-
+    
     def get_bq1_values_with_labels(self) -> Dict[str | None, Union[float, List[float]]]:
         """Returns a dictionary with vial labels as keys and Bq:1 values as values.
     
@@ -129,7 +129,7 @@ class LSCSample:
 
     def __init__(self, activity: pint.Quantity | List[pint.Quantity], name: str):
         self.name = name
-        self.repeated = isinstance(activity, list)
+        self.repeated = isinstance(activity.magnitude, np.ndarray) and activity.magnitude.size > 1
         if self.repeated:
             self.activity = np.mean(activity)
             self.stdev = np.std(activity, ddof=1)
@@ -139,7 +139,7 @@ class LSCSample:
         # TODO add other attributes available in LSC file
         self.background_substracted = False
         self.origin_file = None
-
+    
     def __str__(self):
         return f"Sample {self.name}"
     
@@ -270,7 +270,26 @@ class LIBRASample:
             tuple containing activity and standard deviation if repeated,
             activity only otherwise
         """
-        return self.get_soluble_activity() + self.get_insoluble_activity()
+        is_repeated = any(
+            sample.repeated
+            for sample in self.samples
+        )
+        act_s = 0 * ureg.Bq
+        act_i = 0 * ureg.Bq
+        stdev_s = 0 * ureg.Bq
+        stdev_i = 0 * ureg.Bq
+        act = 0 * ureg.Bq
+        stdev = 0 * ureg.Bq
+
+        if is_repeated:
+            act_s, stdev_s = self.get_soluble_activity()
+            act_i, stdev_i = self.get_insoluble_activity()
+            act = act_s + act_i
+            stdev = LSCSample.stdev_addition([stdev_s, stdev_i])
+        else:
+            act = self.get_soluble_activity() + self.get_insoluble_activity()
+        
+        return (act, stdev) if is_repeated else act
 
 
 class GasStream:
@@ -300,7 +319,7 @@ class GasStream:
 
 
     @staticmethod
-    def append_stdev(stdev_list: List[pint.Quantity], stdev_val: pint.Quantity) -> List[pint.Quantity]:
+    def append_stdev(stdev_list: List, stdev_val: pint.Quantity) -> List:
         """If the list is empty, appends value
         Otherwise uses LSCSample.stdev_addition to calculate the stdev when new value is added, then appends
         """
@@ -368,6 +387,8 @@ class GasStream:
                 elif form == "insoluble":
                     cumulative_activity.append(sample.get_insoluble_activity())
         cumulative_activity = ureg.Quantity.from_list(cumulative_activity)
+        if stdevs:
+            stdevs = ureg.Quantity.from_list(stdevs)
         cumulative_activity = cumulative_activity.cumsum()
         return (cumulative_activity, stdevs) if is_repeated else cumulative_activity
 
