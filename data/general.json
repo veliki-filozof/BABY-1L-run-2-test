@@ -187,7 +187,8 @@
                     "3": null,
                     "4": null
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "1": {
                 "planned_sample_time": "12/11/2024 10:51",
@@ -204,7 +205,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "2": {
                 "planned_sample_time": "12/12/2024 10:51",
@@ -221,7 +223,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "3": {
                 "planned_sample_time": "12/14/2024 10:51",
@@ -238,7 +241,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "4": {
                 "planned_sample_time": "12/16/2024 10:51",
@@ -255,7 +259,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "5": {
                 "planned_sample_time": "12/19/2024 10:51",
@@ -272,7 +277,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "6": {
                 "planned_sample_time": "12/22/2024 10:51",
@@ -289,7 +295,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "7": {
                 "planned_sample_time": "12/27/2024 10:51",
@@ -306,7 +313,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "8": {
                 "planned_sample_time": "1/1/2025 10:51",
@@ -323,7 +331,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "9": {
                 "planned_sample_time": "1/6/2025 10:51",
@@ -340,7 +349,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "10":{
                 "planned_sample_time": "1/11/2025 10:51",
@@ -357,7 +367,8 @@
                     "3": "REPEAT_IV-2-1_TO_2-10.csv",
                     "4": "REPEAT_IV-2-1_TO_2-10.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "11":{
                 "planned_sample_time": "1/18/2025 10:51",
@@ -374,7 +385,8 @@
                     "3": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
                     "4": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "12":{
                 "planned_sample_time": "1/25/2025 10:51",
@@ -391,7 +403,8 @@
                     "3": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
                     "4": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "13":{
                 "planned_sample_time": "2/8/2025 10:51",
@@ -408,7 +421,8 @@
                     "3": null,
                     "4": null
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             }
         },
         "OV": {
@@ -427,7 +441,8 @@
                     "3": null,
                     "4": null
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "1": {
                 "planned_sample_time": "12/19/2024 10:51",
@@ -444,7 +459,8 @@
                     "3": null,
                     "4": null
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "2": {
                 "planned_sample_time": "1/14/2025 10:51",
@@ -461,7 +477,8 @@
                     "3": null,
                     "4": null
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             },
             "3":{
                 "planned_sample_time": "2/8/2025 10:51",
@@ -478,7 +495,8 @@
                     "3": null,
                     "4": null
                 },
-                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv"
+                "repeat_background_filename": "REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv",
+                "minimum_detectable_activity_bq": 0.1
             }
         }
     }
