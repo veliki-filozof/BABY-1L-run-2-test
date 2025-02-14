@@ -301,6 +301,26 @@
                     "3": "1L_BL-2_IV-2-12.csv",
                     "4": "1L_BL-2_IV-2-12.csv"
                 }
+            },
+            "13":{
+                "planned_sample_time": "2/8/2025 10:51",
+                "actual_sample_time": "2/8/2025 15:02",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-13_OV-2-3_RE.csv",
+                    "2": "1L_BL-2_IV-2-13_OV-2-3_RE.csv",
+                    "3": "1L_BL-2_IV-2-13_OV-2-3_RE.csv",
+                    "4": "1L_BL-2_IV-2-13_OV-2-3_RE.csv"
+                }
+            },
+            "14":{
+                "planned_sample_time": "2/12/2025 10:51",
+                "actual_sample_time": "2/12/2025 19:52",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-14_OV-2-4.csv",
+                    "2": "1L_BL-2_IV-2-14_OV-2-4.csv",
+                    "3": "1L_BL-2_IV-2-14_OV-2-4.csv",
+                    "4": "1L_BL-2_IV-2-14_OV-2-4.csv"
+                }
             }
 
         },
@@ -333,6 +353,26 @@
                     "2": "1L_BL-2_IV-2-10_RE_OV-2-2.csv",
                     "3": "1L_BL-2_IV-2-10_RE_OV-2-2.csv",
                     "4": "1L_BL-2_IV-2-10_RE_OV-2-2.csv"
+                }
+            },
+            "3": {
+                "planned_sample_time": "2/8/2025 10:51",
+                "actual_sample_time": "2/8/2025 15:02",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-13_OV-2-3_RE.csv",
+                    "2": "1L_BL-2_IV-2-13_OV-2-3_RE.csv",
+                    "3": "1L_BL-2_IV-2-13_OV-2-3_RE.csv",
+                    "4": "1L_BL-2_IV-2-13_OV-2-3_RE.csv"
+                }
+            },
+            "4": {
+                "planned_sample_time": "2/12/2025 10:51",
+                "actual_sample_time": "2/12/2025 19:52",
+                "lsc_vials_filenames": {
+                    "1": "1L_BL-2_IV-2-14_OV-2-4.csv",
+                    "2": "1L_BL-2_IV-2-14_OV-2-4.csv",
+                    "3": "1L_BL-2_IV-2-14_OV-2-4.csv",
+                    "4": "1L_BL-2_IV-2-14_OV-2-4.csv"
                 }
             }
         }
