@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from typing import List, Dict
 import pint
 import pint.facets
@@ -10,6 +11,12 @@ from typing import Literal
 
 # config
 DATE_FORMAT = "%m/%d/%Y %I:%M %p"
+
+def stdev_addition(stdevs: List[pint.Quantity]) -> pint.Quantity:
+    """Calculates stdev of summed variables 
+    """
+    result = np.sqrt(np.sum(std**2 for std in stdevs))
+    return result
 
 
 class LSCFileReader:
@@ -112,11 +119,17 @@ class LSCFileReader:
 
 class LSCSample:
     activity: pint.Quantity
+    stdev: pint.Quantity
     origin_file: str | None
 
-    def __init__(self, activity: pint.Quantity, name: str):
-        self.activity = activity
+    def __init__(self, activity: pint.Quantity | List[pint.Quantity], name: str):
         self.name = name
+        self.repeated = isinstance(activity, list)
+        if self.repeated:
+            self.activity = activity
+        else:
+            self.activity = activity
+            self.stdev = 0.0
         # TODO add other attributes available in LSC file
         self.background_substracted = False
         self.origin_file = None
