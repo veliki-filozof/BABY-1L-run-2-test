@@ -1,0 +1,86 @@
+Assay Definition
+
+Assay Description:
+Repeat count low-level assay for 3H in UG LLT counting 1L run 2 vials OV 3 and 4 from set 1 through set 10
+Assay Type: DPM (Single)
+Report Name: Report1
+Output Data Path: C:\Packard\TriCarb\Results\Default\Flibe_Test\Various
+Raw Results Path: C:\Packard\Tricarb\Results\Default\Flibe_Test\20250129_1658\20250129_1658.results
+Comma-Delimited File Name: C:\Packard\TriCarb\Results\Default\Flibe_Test\Various\REPEAT_1L-BL-2_IV-2-11_IV-2-12.csv
+Assay File Name: C:\Packard\TriCarb\Assays\Flibe_Test.lsa
+
+
+Count Conditions
+
+Nuclide: 3H UG LLT Normal     
+   Quench Indicator: tSIE/AEC
+   External Std Terminator (sec): 0.5 2s%
+   Pre-Count Delay (min): 0.00
+Quench Set:                   
+   Low Energy: 3H-UG-LLT-NM
+Count Time (min): 100.00
+Count Mode: Normal                                          
+Assay Count Cycles: 1         Repeat Sample Count: 6        
+Number of Vials/Sample: 1     Calculate % Reference: Off                                  
+
+
+Background Subtract: Off
+Low CPM Threshold: Off
+2 Sigma % Terminator: Off
+
+Regions         LL       UL
+A              0.0     18.6
+B              2.0     18.6
+C              4.0     18.6
+
+
+Count Corrections
+
+Static Controller: On         Luminescence Correction: On     GCT: n/a
+Colored Samples: Off          Heterogeneity Monitor: Off      PAC: Disabled
+Coincidence Time (nsec): 18   Delay Before Burst (nsec): 75   PAC Strength: n/a   Auxiliary Spectrum: n/a
+
+
+S#,SMPL_ID,Bq:1,CPMA,LUM,tSIE,Eff Nuc1 In A,Count Time,DPM1
+1,1L-BL-2,0.377,6,0,285.43,26.37,100.00,23
+1,1L-BL-2,0.382,6,0,285.60,26.38,100.00,23
+1,1L-BL-2,0.388,6,0,285.53,26.37,100.00,23
+1,1L-BL-2,0.415,7,0,286.34,26.44,100.00,25
+1,1L-BL-2,0.418,7,0,286.50,26.46,100.00,25
+1,1L-BL-2,0.403,6,0,285.46,26.37,100.00,24
+,,0.397,6,0,285.81,26.40,,24
+
+Missing vial 2.
+3,1L-IV_2-11-3,2.861,46,0,290.20,26.79,100.00,172
+3,1L-IV_2-11-3,2.940,47,0,290.02,26.77,100.00,176
+3,1L-IV_2-11-3,2.856,46,0,290.73,26.84,100.00,171
+3,1L-IV_2-11-3,2.897,47,0,290.15,26.78,100.00,174
+3,1L-IV_2-11-3,2.811,45,0,290.28,26.79,100.00,169
+3,1L-IV_2-11-3,2.794,45,0,289.03,26.67,100.00,168
+,,2.860,46,0,290.07,26.77,,172
+
+4,1L-IV_2-11-4,1.051,17,1,287.35,26.53,100.00,63
+4,1L-IV_2-11-4,1.062,17,1,286.67,26.47,100.00,64
+4,1L-IV_2-11-4,1.088,17,1,286.95,26.50,100.00,65
+4,1L-IV_2-11-4,1.059,17,1,287.65,26.56,100.00,64
+4,1L-IV_2-11-4,1.082,17,0,287.68,26.56,100.00,65
+4,1L-IV_2-11-4,1.048,17,0,288.64,26.64,100.00,63
+,,1.065,17,1,287.49,26.54,,64
+
+Missing vial 5.
+6,1L-IV_2-12-3,2.062,33,1,288.89,26.66,100.00,124
+6,1L-IV_2-12-3,2.031,32,0,288.58,26.64,100.00,122
+6,1L-IV_2-12-3,1.982,32,0,287.87,26.57,100.00,119
+6,1L-IV_2-12-3,2.042,33,0,288.39,26.62,100.00,123
+6,1L-IV_2-12-3,2.000,32,0,287.44,26.54,100.00,120
+6,1L-IV_2-12-3,1.969,31,0,288.20,26.60,100.00,118
+,,2.014,32,0,288.23,26.60,,121
+
+7,1L-IV_2-12-4,0.826,13,0,291.35,26.90,100.00,50
+7,1L-IV_2-12-4,0.906,15,0,289.73,26.74,100.00,54
+7,1L-IV_2-12-4,0.900,14,0,289.70,26.73,100.00,54
+7,1L-IV_2-12-4,0.896,14,0,288.96,26.67,100.00,54
+7,1L-IV_2-12-4,0.869,14,0,289.86,26.75,100.00,52
+7,1L-IV_2-12-4,0.897,14,0,289.41,26.71,100.00,54
+,,0.882,14,0,289.84,26.75,,53
+
