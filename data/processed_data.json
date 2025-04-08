@@ -124,15 +124,15 @@
         }
     ],
     "neutron_rate_used_in_model": {
-        "value": 261100000.0,
+        "value": 348450000.0,
         "unit": "neutron / second"
     },
     "measured_TBR": {
-        "value": 0.0023778561020176,
+        "value": 0.0017817713538148812,
         "unit": "particle / neutron"
     },
     "TBR_used_in_model": {
-        "value": 0.0023778561020176,
+        "value": 0.0017817713538148812,
         "unit": "particle / neutron"
     },
     "k_top": {
